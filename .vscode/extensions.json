@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "Shopify.ruby-lsp",
+    "rebornix.Ruby",
+    "misogi.ruby-rubocop",
+    "bung87.rails",
+    "eamodio.gitlens",
+    "EditorConfig.EditorConfig",
+    "esbenp.prettier-vscode",
+    "PKief.material-icon-theme",
+    "GitHub.github-vscode-theme"
+  ]
+}

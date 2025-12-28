@@ -1,0 +1,44 @@
+{
+  // Editor
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.trimAutoWhitespace": true,
+
+  // Prettier
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 100,
+
+  // Ruby / Rails
+  "ruby.useBundler": true,
+  "ruby.useLanguageServer": true,
+  "ruby.format": "rubocop",
+
+  // Files
+  "files.autoSave": "onFocusChange",
+  "files.exclude": {
+    "**/.git": true,
+    "**/log": true,
+    "**/tmp": true,
+    "**/storage": true
+  },
+
+  // Search
+  "search.exclude": {
+    "**/log": true,
+    "**/tmp": true,
+    "**/storage": true
+  },
+
+  // Terminal
+  "terminal.integrated.defaultProfile.linux": "bash",
+
+  // Theme (TEAM STANDARD)
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.iconTheme": "material-icon-theme",
+
+
+  //  Word Wrap by default for all files
+  "editor.wordWrap": "on"
+}

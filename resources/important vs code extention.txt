@@ -1,0 +1,12 @@
+Ruby / Rails
+Ruby LSP (Shopify)
+Ruby (rebornix)
+Ruby RuboCop
+Productivity
+GitLens
+EditorConfig
+Material Icon Theme
+GitHub Theme
+Formatting
+Prettier
+ 

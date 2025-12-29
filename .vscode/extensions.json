@@ -1,13 +1,14 @@
 {
   "recommendations": [
-    "Shopify.ruby-lsp",
-    "rebornix.Ruby",
-    "misogi.ruby-rubocop",
-    "bung87.rails",
-    "eamodio.gitlens",
-    "EditorConfig.EditorConfig",
-    "esbenp.prettier-vscode",
-    "PKief.material-icon-theme",
-    "GitHub.github-vscode-theme"
+    "Shopify.ruby-lsp", // PRIMARY Ruby intelligence
+    "rebornix.Ruby", // Syntax + debugging ONLY
+    "misogi.ruby-rubocop", // Linting & auto-fix
+    "bung87.rails", // Rails navigation helpers
+    "eamodio.gitlens", // Git superpowers
+    "EditorConfig.EditorConfig", // Enforce formatting rules
+    "esbenp.prettier-vscode", // JS/JSON/YAML only
+    "PKief.material-icon-theme", // Better Rails tree
+    "GitHub.github-vscode-theme", // UI consistency
+    "aliariff.vscode-erb-beautify"
   ]
 }

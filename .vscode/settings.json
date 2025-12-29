@@ -1,21 +1,48 @@
 {
+  // =========================
   // Editor
+  // =========================
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.trimAutoWhitespace": true,
+  "editor.wordWrap": "on",
 
-  // Prettier
+  // =========================
+  // Prettier (NON-Ruby / NON-ERB)
+  // =========================
   "prettier.singleQuote": true,
   "prettier.trailingComma": "es5",
   "prettier.printWidth": 100,
 
-  // Ruby / Rails
-  "ruby.useBundler": true,
-  "ruby.useLanguageServer": true,
-  "ruby.format": "rubocop",
+  "[ruby]": {
+    "editor.defaultFormatter": null
+  },
 
+  "[erb]": {
+    "editor.defaultFormatter": "aliariff.vscode-erb-beautify",
+    "editor.formatOnSave": true
+  },
+
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features",
+    "editor.formatOnSave": true
+  },
+
+  // =========================
+  // Ruby / Rails
+  // =========================
+  "ruby.useBundler": true,
+  "ruby.useLanguageServer": false,
+
+  "rubyLsp.bundleGemfile": true,
+  "rubyLsp.formatter": "rubocop",
+
+  "ruby.rubocop.autocorrectOnSave": true,
+
+  // =========================
   // Files
+  // =========================
   "files.autoSave": "onFocusChange",
   "files.exclude": {
     "**/.git": true,
@@ -24,21 +51,25 @@
     "**/storage": true
   },
 
+  // =========================
   // Search
+  // =========================
   "search.exclude": {
     "**/log": true,
     "**/tmp": true,
     "**/storage": true
   },
 
-  // Terminal
-  "terminal.integrated.defaultProfile.linux": "bash",
-
-  // Theme (TEAM STANDARD)
+  // =========================
+  // UI
+  // =========================
   "workbench.colorTheme": "GitHub Dark Default",
   "workbench.iconTheme": "material-icon-theme",
 
-
-  //  Word Wrap by default for all files
-  "editor.wordWrap": "on"
+  // =========================
+  // Emmet for ERB
+  // =========================
+  "emmet.includeLanguages": {
+    "erb": "html"
+  }
 }

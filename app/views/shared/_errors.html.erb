@@ -1,0 +1,11 @@
+<% if object.errors.any? %>
+  <div style="color: red;">
+    <h3><%= error_title(object) %></h3>
+
+    <ul>
+      <% object.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

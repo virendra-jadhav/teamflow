@@ -41,5 +41,5 @@
 !.vscode/extensions.json
 
 # hide database.yml file
-/config/database.yml
+# /config/database.yml
 .env

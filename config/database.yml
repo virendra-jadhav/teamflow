@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: <%= Rails.application.credentials.dig(:db, :username) %>
+  password: <%= Rails.application.credentials.dig(:db, :password) %>
+  host: <%= Rails.application.credentials.dig(:db, :host) || "localhost" %>
+
+development:
+  <<: *default
+  database: teamflow_development
+
+test:
+  <<: *default
+  database: teamflow_test
+
+production:
+  <<: *default
+  database: teamflow_production

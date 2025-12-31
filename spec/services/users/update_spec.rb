@@ -32,4 +32,3 @@ RSpec.describe Users::Update do
     end
   end
 end
-

@@ -11,8 +11,9 @@ class UsersController < ApplicationController
 
   def create
     # @user = User.new(user_params)
+    @user = Users::Create.new(user_params).call
 
-    if Users::Create.new(user_params).call
+    if @user.persisted?
       redirect_to edit_user_path(@user), notice: "User created successfully"
     else
       render :new, status: :unprocessable_entity

@@ -16,7 +16,7 @@
   "prettier.printWidth": 100,
 
   "[ruby]": {
-    "editor.defaultFormatter": null
+    "editor.defaultFormatter": "Shopify.ruby-lsp"
   },
 
   "[erb]": {

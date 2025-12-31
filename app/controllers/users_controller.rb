@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_user, only: [ :edit, :update, :destroy ]
 
   def index
     @users = User.order(created_at: :desc)
@@ -12,7 +12,7 @@ class UsersController < ApplicationController
   def create
     # @user = User.new(user_params)
 
-    if Users::Update.new(user_params).call
+    if Users::Create.new(user_params).call
       redirect_to edit_user_path(@user), notice: "User created successfully"
     else
       render :new, status: :unprocessable_entity
@@ -23,12 +23,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    # if @user.update(user_params)
+     # if @user.update(user_params)
      if Users::Update.new(@user, user_params).call
       redirect_to edit_user_path(@user), notice: "User updated successfully"
-    else
+     else
       render :edit, status: :unprocessable_entity
-    end
+     end
   end
 
   def destroy

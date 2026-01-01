@@ -55,6 +55,22 @@ RSpec.describe "Users", type: :request do
           expect(response).to have_http_status(:unprocessable_entity)
         end
       end
+      context "as member" do
+        let!(:member) do
+          User.create!(name: "Member", email: "member@mail.com", role: "member")
+        end
+        before do
+          allow_any_instance_of(ApplicationController)
+          .to receive(:current_user)
+          .and_return(member)
+        end
+        it "return forbidden" do
+          post users_path, params: {
+            user: { name: "X", email: "x@test.com" }
+          }
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
   end
 
   describe "PATCH /users/:id" do

@@ -1,12 +1,32 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
+  protect_from_forgery with: :null_session
 
+  helper_method :current_user
 
-   protect_from_forgery with: :null_session
+  def current_user
+    @current_user
+  end
 
-  # protect_from_forgery with: :exception
+  private
 
-  # # Disable CSRF only for JSON requests
-  # protect_from_forgery unless: -> { request.format.json? }
+  def authorize!(record, action)
+    policy = policy_for(record)
+    allowed = policy.public_send("#{action}?")
+
+    return if allowed
+
+    head :forbidden
+  end
+
+  def policy_for(record)
+    klass =
+      if record.is_a?(Class)
+        record
+      else
+        record.class
+      end
+
+    "#{klass}Policy".constantize.new(current_user, record)
+  end
 end

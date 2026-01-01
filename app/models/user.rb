@@ -7,6 +7,12 @@ class User < ApplicationRecord
 
     around_save :handle_unique_email_violation
 
+    enum role: {
+        member: "member",
+        admin: "admin"
+    }
+    validates :role, presence: true
+
     private
     def handle_unique_email_violation
         yield

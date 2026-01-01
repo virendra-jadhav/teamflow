@@ -28,6 +28,9 @@
     "editor.defaultFormatter": "vscode.html-language-features",
     "editor.formatOnSave": true
   },
+  "[diff]": {
+    "editor.formatOnSave": false
+  },
 
   // =========================
   // Ruby / Rails
@@ -38,12 +41,12 @@
   "rubyLsp.bundleGemfile": true,
   "rubyLsp.formatter": "rubocop",
 
-  "ruby.rubocop.autocorrectOnSave": true,
+  "ruby.rubocop.autocorrectOnSave": false,
 
   // =========================
   // Files
   // =========================
-  "files.autoSave": "onFocusChange",
+  "files.autoSave": "off",
   "files.exclude": {
     "**/.git": true,
     "**/log": true,

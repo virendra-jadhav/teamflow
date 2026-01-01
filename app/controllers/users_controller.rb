@@ -55,9 +55,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def user_params
-    params.require(:user).permit(:name, :email)
-  end
+  
 
   def authorize_index
     authorize!(User, :index)
@@ -73,5 +71,14 @@ class UsersController < ApplicationController
 
   def authorize_destroy
     authorize!(@user, :destroy)
+  end
+
+  def user_params
+    permitted = params.require(:user).permit(:name, :email, :password, :password_confirmation).to_h
+    if permitted[:password].blank?
+      permitted.delete(:password)
+      permitted.delete(:password_confirmation)
+    end
+    permitted
   end
 end

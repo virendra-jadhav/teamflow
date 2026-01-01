@@ -8,6 +8,16 @@
     <%= form.label :email %><br>
     <%= form.email_field :email %>
   </div>
+  <% if user.new_record? %>
+  <div>
+    <%= form.label :password %><br>
+    <%= form.password_field :password%>
+  </div>
+  <div>
+    <%= form.label :password_confirmation %><br>
+    <%= form.password_field :password_confirmation %>
+  </div>
+  <% end %>
 
   <div>
     <%= form.submit %>

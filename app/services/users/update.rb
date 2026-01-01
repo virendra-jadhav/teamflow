@@ -6,13 +6,18 @@ module Users
     end
 
     def call
-      return false unless @user.update(@params)
+      # return false unless @user.update(@params)
 
-      # future extensions:
-      # AuditLog.create!(...)
-      # UserUpdatedJob.perform_later(@user.id)
+      # # future extensions:
+      # # AuditLog.create!(...)
+      # # UserUpdatedJob.perform_later(@user.id)
 
-      true
+      # true
+
+      return true if @params.empty?
+      puts @params.inspect
+      puts @user
+      @user.update(@params)
     end
   end
 end

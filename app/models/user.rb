@@ -13,6 +13,29 @@ class User < ApplicationRecord
 
   around_save :handle_unique_email_violation
 
+  # Password reset functionality
+  RESET_TOKEN_EXPIRY = 2.hours
+
+  def generate_password_reset!
+    token = SecureRandom.urlsafe_base64(32)
+
+    update!(
+      reset_password_token: token,
+      reset_password_sent_at: Time.current
+    )
+    token
+  end
+  def reset_token_expired?
+    reset_password_sent_at < RESET_TOKEN_EXPIRY.ago
+  end
+
+  def clear_password_reset!
+    update!(
+      reset_password_token: nil,
+      reset_password_sent_at: nil,
+    )
+  end
+
   private
 
   def handle_unique_email_violation

@@ -26,7 +26,11 @@ class ApplicationController < ActionController::Base
 
     return if allowed
 
-    head :forbidden
+    # head :forbidden
+    respond_to do |format|
+      format.html{ redirect_to users_path, alert: "Not authorized"}
+      format.json { head :forbidden}
+    end
   end
 
   def policy_for(record)

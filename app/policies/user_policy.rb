@@ -7,8 +7,9 @@ class UserPolicy
   end
 
   def index?
-    current_user.present?
-  end
+  current_user&.admin?
+end
+
 
   def create?
     current_user&.admin?

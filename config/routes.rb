@@ -18,9 +18,16 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index, :new, :create, :edit, :update, :destroy]
 
+  # login 
   get "/login", to: "sessions#new"
   post "/login", to: "sessions#create"
   delete "/logout", to: "sessions#destroy"
+
+  # password reset
+  get  "/password_resets/new", to: "password_resets#new",    as: :new_password_reset
+  post "/password_resets",     to: "password_resets#create", as: :password_resets
+  get  "/password_resets/:token/edit", to: "password_resets#edit",   as: :edit_password_reset
+  patch "/password_resets/:token",     to: "password_resets#update"
 
 
 end

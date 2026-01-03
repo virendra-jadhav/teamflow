@@ -36,7 +36,28 @@ class User < ApplicationRecord
     )
   end
 
+  # Confirmation mail 
+  before_create :set_confirmation_token
+  scope :confirmed, -> { where.not(confirmed_at: nil )}
+  def confirmed?
+    confirmed_at.present? 
+  end
+  def confirm!
+    update!(
+      confirmed_at: Time.current,
+      confirmation_token: nil
+    )
+  end
+  def confirmation_expired?
+    confirmation_sent_at < 2.days.ago
+  end
+
   private
+
+  def set_confirmation_token
+    self.confirmation_token = SecureRandom.urlsafe_base64(32)
+    self.confirmation_sent_at = Time.current
+  end
 
   def handle_unique_email_violation
     yield

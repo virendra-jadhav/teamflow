@@ -7,6 +7,7 @@ class PasswordResetsController < ApplicationController
     user = User.find_by(email: params[:email])
     if user
       token = user.generate_password_reset!
+      UserMailer.password_reset(user).deliver_later
       Rails.logger.info "RESET TOKEN : #{token}"
     end
     redirect_to login_path, notice: "If your email exists, you will receive reset instructions"

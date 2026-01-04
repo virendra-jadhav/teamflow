@@ -6,7 +6,9 @@ RSpec.describe Users::Create do
       let(:params) do
         {
           name: "Virendra",
-          email: "virendra@example.com"
+          email: "virendra@example.com",
+          password: "password",
+          password_confirmation: "password"
         }
       end
 

@@ -1,0 +1,10 @@
+<h2>Resend confirmation email</h2>
+
+<%= form_with url: resend_confirmation_path, local: true do %>
+<div>
+  <%= label_tag :email %>
+  <%= email_field_tag :email %>
+</div>
+
+<%= submit_tag "Resend confirmation" %>
+<% end %>

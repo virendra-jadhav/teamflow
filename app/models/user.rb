@@ -36,11 +36,11 @@ class User < ApplicationRecord
     )
   end
 
-  # Confirmation mail 
+  # Confirmation mail
   before_create :set_confirmation_token
-  scope :confirmed, -> { where.not(confirmed_at: nil )}
+  scope :confirmed, -> { where.not(confirmed_at: nil) }
   def confirmed?
-    confirmed_at.present? 
+    confirmed_at.present?
   end
   def confirm!
     update!(
@@ -50,6 +50,35 @@ class User < ApplicationRecord
   end
   def confirmation_expired?
     confirmation_sent_at < 2.days.ago
+  end
+
+  # resend email confirmation
+  def regenerate_confirmation!
+    update!(
+      confirmation_token: SecureRandom.urlsafe_base64(32),
+      confirmation_sent_at: Time.current
+    )
+  end
+
+  # -------------------------
+  # Remember-me logic
+  # -------------------------
+
+  attr_accessor :remember_token
+
+  def remember!
+    self.remember_token = SecureRandom.urlsafe_base64
+    update!(
+      remember_digest: BCrypt::Password.create(remember_token)
+    )
+  end
+  def forget!
+    update!(remember_digest: nil)
+  end
+
+  def authenticate_with_remember_token?(token)
+    return false if remember_digest.blank?
+    BCrypt::Password.new(remember_digest).is_password?(token)
   end
 
   private

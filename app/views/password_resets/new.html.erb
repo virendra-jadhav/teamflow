@@ -1,7 +1,10 @@
-<h2>Forgot Password</h2>
+<h2>Forgot your password?</h2>
 
-<%= form_with url: password_resets_path do %>
-<%= label_tag :email %>
-<%= email_field_tag :email %>
-<%= submit_tag "Send reset link" %>
+<%= form_with url: password_resets_path, local: true do %>
+<div>
+  <%= label_tag :email %>
+  <%= email_field_tag :email %>
+</div>
+
+<%= submit_tag "Send reset instructions" %>
 <% end %>

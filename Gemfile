@@ -60,6 +60,11 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # gem for sending email
+  gem "letter_opener"
+  # OR (recommended)
+  gem "letter_opener_web"
 end
 
 group :test do
@@ -68,4 +73,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "letter_opener", "~> 1.10"
+# gem "letter_opener", "~> 1.10"

@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
-  protect_from_forgery with: :null_session
+  # protect_from_forgery with: :null_session
+  protect_from_forgery with: :exception
+
 
   before_action :require_login
 
@@ -10,26 +12,37 @@ class ApplicationController < ActionController::Base
     return if current_user
     redirect_to login_path, alert: "Please log in"
   end
-  
+
 
   private
 
   def current_user
+    # return @current_user if defined?(@current_user)
+
+    # @current_user = User.find_by(id: session[:user_id])
+
+    # @current_user ||= User.find_by(id: session[:user_id])
+    #
     return @current_user if defined?(@current_user)
 
     @current_user = User.find_by(id: session[:user_id])
+    session.delete(:user_id) if @current_user.nil?
+    @current_user
   end
 
   def authorize!(record, action)
     policy = policy_for(record)
     allowed = policy.public_send("#{action}?")
-
     return if allowed
 
     # head :forbidden
+    # respond_to do |format|
+    #   format.html { redirect_to users_path, alert: "Not authorized" }
+    #   format.json { head :forbidden }
+    # end
     respond_to do |format|
-      format.html{ redirect_to users_path, alert: "Not authorized"}
-      format.json { head :forbidden}
+      format.html { render file: Rails.root.join("public/403.html"), status: :forbidden }
+      format.json { head :forbidden }
     end
   end
 

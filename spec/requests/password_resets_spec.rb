@@ -31,4 +31,31 @@ RSpec.describe "Password reset", type: :request do
     expect(response).to redirect_to(login_path)
     expect(user.reload.authenticate("newpassword")).to be_truthy
   end
+  context "Test full password reset functionality" do
+    let!(:user) do
+      User.create!(
+        name: "User",
+        email: "user@test.com",
+        password: "oldpassword",
+        password_confirmation: "oldpassword",
+        confirmed_at: Time.current
+      )
+    end
+    it "resets password successfully" do
+      post password_resets_path, params: {
+        email: user.email
+      }
+      user.reload
+      token = user.reset_password_token
+
+      patch password_reset_path(token), params: {
+        user: {
+          password: "newpassword",
+          password_confirmation: "newpassword"
+        }
+      }
+      expect(response).to redirect_to(login_path)
+      expect(user.reload.authenticate("newpassword")).to be_truthy
+    end
+  end
 end

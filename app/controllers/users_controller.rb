@@ -7,6 +7,8 @@ class UsersController < ApplicationController
   before_action :authorize_update, only: [ :edit, :update ]
   before_action :authorize_destroy, only: :destroy
 
+  skip_before_action :require_login, only: [ :new, :create ]
+
   def index
     # authorize!(User, :index)
     @users = User.order(created_at: :desc)
@@ -55,7 +57,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  
+
 
   def authorize_index
     authorize!(User, :index)

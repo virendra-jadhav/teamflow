@@ -25,9 +25,19 @@ class ApplicationController < ActionController::Base
     #
     return @current_user if defined?(@current_user)
 
-    @current_user = User.find_by(id: session[:user_id])
-    session.delete(:user_id) if @current_user.nil?
-    @current_user
+    # @current_user = User.find_by(id: session[:user_id])
+    # session.delete(:user_id) if @current_user.nil?
+    # @current_user
+
+    if session[:user_id]
+      @current_user = User.find_by(id: session[:user_id])
+    elsif cookies.signed[:remember_user_id]
+      user = User.find_by(id: cookies.signed[:remember_user_id])
+      if user&.authenticate_with_remember_token?(cookies.signed[:remember_token])
+        session[:user_id] = user.id
+        @current_user = user
+      end
+    end
   end
 
   def authorize!(record, action)

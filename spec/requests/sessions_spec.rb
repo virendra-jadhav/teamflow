@@ -7,7 +7,8 @@ RSpec.describe "Sessions", type: :request do
       email: "user@test.com",
       password: "password",
       password_confirmation: "password",
-      role: "member"
+      role: "member",
+      confirmed_at: Time.current
     )
   end
 
@@ -25,7 +26,7 @@ RSpec.describe "Sessions", type: :request do
         password: "password"
       }
 
-      expect(response).to redirect_to(users_path)
+      expect(response).to redirect_to(home_path)
     end
 
     it "fails with invalid credentials" do

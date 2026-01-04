@@ -19,22 +19,31 @@
 </head>
 
 <body>
-   <% flash.each do |type, message| %>
-    <div class="flash <%= type %>">
-      <%= message %>
-    </div>
+  <%# <% flash.each do |type, message| %>
+  <%# <div class="flash <%= type %>
+  <%# <%= message %>
+  <%# </div> %>
+  <%# <% end %>
+  <% if flash[:notice] %>
+  <p style="color: green"><%= flash[:notice] %></p>
+  <% end %>
+
+  <% if flash[:alert] %>
+  <p style="color: red"><%= flash[:alert] %></p>
   <% end %>
 
   <nav>
-  <% if current_user %>
+    <% if current_user %>
     Logged in as <strong><%= current_user.email %></strong> |
     <%= link_to "Users", users_path %> |
     <%= link_to "New User", new_user_path %> |
+    <%= link_to "Home", home_path %> |
     <%= button_to "Logout", logout_path, method: :delete %>
-  <% else %>
+
+    <% else %>
     <%= link_to "Login", login_path %>
-  <% end %>
-</nav>
+    <% end %>
+  </nav>
 
   <hr>
 

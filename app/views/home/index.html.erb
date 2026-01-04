@@ -1,0 +1,12 @@
+<h1>Welcome, <%= current_user.name %></h1>
+
+<p>Your role: <%= current_user.role %></p>
+
+<nav>
+  <% if current_user.admin? %>
+  <%= link_to "Manage Users", users_path %> |
+  <%= link_to "Edit Profile", edit_user_path(current_user) %>
+  <% end %>
+
+  <%= button_to "Logout", logout_path, method: :delete %>
+</nav>

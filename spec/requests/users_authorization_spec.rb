@@ -7,7 +7,8 @@ RSpec.describe "Users Auth", type: :request do
       email: "admin@test.com",
       password: "password",
       password_confirmation: "password",
-      role: "admin"
+      role: "admin",
+      confirmed_at: Time.current
     )
   end
 
@@ -17,7 +18,8 @@ RSpec.describe "Users Auth", type: :request do
       email: "member@test.com",
       password: "password",
       password_confirmation: "password",
-      role: "member"
+      role: "member",
+      confirmed_at: Time.current
     )
   end
 
@@ -27,7 +29,8 @@ RSpec.describe "Users Auth", type: :request do
       email: "target@test.com",
       password: "password",
       password_confirmation: "password",
-      role: "member"
+      role: "member",
+      confirmed_at: Time.current
     )
   end
 
@@ -54,7 +57,8 @@ RSpec.describe "Users Auth", type: :request do
       it "returns forbidden" do
         get users_path
         # expect(response).to have_http_status(:forbidden)
-        expect(response).to redirect_to(users_path)
+        # expect(response).to redirect_to(users_path)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -93,7 +97,8 @@ RSpec.describe "Users Auth", type: :request do
 
         # expect(response).to have_http_status(:forbidden)
         # expect(target_user.reload.name).not_to eq("Hacked")
-        expect(response).to redirect_to(users_path)
+        # expect(response).to redirect_to(users_path)
+        expect(response).to have_http_status(:forbidden)
         expect(target_user.reload.name).not_to eq("Hacked")
       end
     end

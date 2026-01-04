@@ -1,25 +1,28 @@
 <%= form_with model: user, local: true do |form| %>
-  <div>
-    <%= form.label :name %><br>
-    <%= form.text_field :name %>
-  </div>
+<div>
+  <%= form.label :name %><br>
+  <%= form.text_field :name %>
+</div>
 
-  <div>
-    <%= form.label :email %><br>
-    <%= form.email_field :email %>
-  </div>
-  <% if user.new_record? %>
-  <div>
-    <%= form.label :password %><br>
-    <%= form.password_field :password%>
-  </div>
-  <div>
-    <%= form.label :password_confirmation %><br>
-    <%= form.password_field :password_confirmation %>
-  </div>
-  <% end %>
+<div>
+  <%= form.label :email %><br>
+  <%= form.email_field :email %>
+</div>
+<% if user.new_record? %>
+<div>
+  <%= form.label :password %><br>
+  <%= form.password_field :password%>
+</div>
+<div>
+  <%= form.label :password_confirmation %><br>
+  <%= form.password_field :password_confirmation %>
+</div>
+<% end %>
 
-  <div>
-    <%= form.submit %>
-  </div>
+<div>
+  <%= form.submit %>
+</div>
+<div>
+  <%= link_to "Home", home_path%>
+</div>
 <% end %>

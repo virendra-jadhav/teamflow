@@ -7,7 +7,8 @@ RSpec.describe "User update without password", type: :request do
       email: "admin2@test.com",
       password: "password",
       password_confirmation: "password",
-      role: "admin"
+      role: "admin",
+      confirmed_at: Time.current
     )
   end
 
@@ -17,7 +18,8 @@ RSpec.describe "User update without password", type: :request do
       email: "user@test.com",
       password: "password",
       password_confirmation: "password",
-      role: "member"
+      role: "member",
+      confirmed_at: Time.current
     )
   end
 

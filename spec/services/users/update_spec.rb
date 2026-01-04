@@ -4,7 +4,10 @@ RSpec.describe Users::Update do
     let!(:user) do
       User.create!(
         name: "Old Name",
-        email: "old@example.com"
+        email: "old@example.com",
+        password: "password",
+        password_confirmation: "password",
+        confirmed_at: Time.current
       )
     end
 

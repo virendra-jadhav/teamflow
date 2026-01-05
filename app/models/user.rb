@@ -1,5 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
+  MAX_LOGIN_ATTEMPTS = 5
+  LOCK_DURATION = 30.minutes
 
   validates :name, presence: true
   validates :email,
@@ -79,6 +81,44 @@ class User < ApplicationRecord
   def authenticate_with_remember_token?(token)
     return false if remember_digest.blank?
     BCrypt::Password.new(remember_digest).is_password?(token)
+  end
+
+
+  ### locking functionality
+  def locked?
+        locked_at.present? && locked_at > LOCK_DURATION.ago
+  end
+  def increment_failed_attempts!
+    increment!(:failed_attempts)
+    lock! if failed_attempts >= MAX_LOGIN_ATTEMPTS
+  end
+  def reset_failed_attempts!
+    update!(failed_attempts: 0)
+  end
+
+  def lock!
+    update!(
+      locked_at: Time.current,
+      failed_attempts: MAX_LOGIN_ATTEMPTS
+    )
+  end
+  def unlock!
+    update!(
+      locked_at: nil,
+      failed_attempts: 0,
+      unlock_token_digest: nil
+    )
+  end
+  # unlock login attemps
+  def generate_unlock_token!
+    token = SecureRandom.urlsafe_base64(32)
+    digest = BCrypt::Password.create(token)
+    update!(unlock_token_digest: digest)
+    token
+  end
+  def valid_unlock_token?(token)
+    return false if unlock_token_digest.blank?
+    BCrypt::Password.new(unlock_token_digest).is_password?(token)
   end
 
   private

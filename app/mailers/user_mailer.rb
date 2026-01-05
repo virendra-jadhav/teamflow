@@ -17,4 +17,11 @@ class UserMailer < ApplicationMailer
       subject: "Confirm your email"
     )
   end
+  def unlock_account(user, token)
+    @unlock_url = unlock_account_url(token: token, user_id: user.id)
+    mail(
+      to: user.email,
+      subject: "Unlock your account "
+    )
+  end
 end

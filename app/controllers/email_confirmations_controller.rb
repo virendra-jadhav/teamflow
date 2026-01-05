@@ -5,11 +5,9 @@ class EmailConfirmationsController < ApplicationController
 
   def create
     user = User.find_by(email: params[:email])
-    puts "user is : #{user}"
-    puts "is confirmed: #{user.confirmed?}"
     if user && !user.confirmed?
       user.regenerate_confirmation!
-      
+
       UserMailer.email_confirmation(user).deliver_later
     end
     redirect_to login_path, notice: "If your email exists, confirmation instructions were sent."

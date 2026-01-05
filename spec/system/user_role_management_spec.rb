@@ -12,7 +12,9 @@ RSpec.describe "User role management UI", type: :system do
 
     it "shows role management controls" do
       expect(page).to have_content("Users")
-      expect(page).to have_link("Change Role")
+      # expect(page).to have_link("Change Role")
+      expect(page).to have_button("Update Role")
+      # expect(page).to have_selector("input[type='submit'][value='Update Role']")
     end
   end
 
@@ -24,7 +26,9 @@ RSpec.describe "User role management UI", type: :system do
 
     it "does not show role management controls" do
       expect(page).to have_content("Users")
-      expect(page).not_to have_link("Change Role")
+      # expect(page).not_to have_link("Change Role")
+      expect(page).not_to have_button("Update Role")
+      # expect(page).to have_selector("input[type='submit'][value='Update Role']")
     end
   end
 end

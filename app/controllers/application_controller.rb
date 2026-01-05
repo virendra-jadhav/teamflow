@@ -40,29 +40,46 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def authorize!(record, action)
-    policy = policy_for(record)
-    allowed = policy.public_send("#{action}?")
-    return if allowed
+  # -------------------------
+  # PUNDIT
+  # -------------------------
+  include Pundit::Authorization
 
-    # head :forbidden
-    # respond_to do |format|
-    #   format.html { redirect_to users_path, alert: "Not authorized" }
-    #   format.json { head :forbidden }
-    # end
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  private
+
+  def user_not_authorized
     respond_to do |format|
       format.html { render file: Rails.root.join("public/403.html"), status: :forbidden }
       format.json { head :forbidden }
     end
   end
 
-  def policy_for(record)
-    klass =
-      if record.is_a?(Class)
-        record
-      else
-        record.class
-      end
-    "#{klass}Policy".constantize.new(current_user, record)
-  end
+  # custom authorization before pundit
+  # def authorize!(record, action)
+  #   policy = policy_for(record)
+  #   allowed = policy.public_send("#{action}?")
+  #   return if allowed
+
+  #   # head :forbidden
+  #   # respond_to do |format|
+  #   #   format.html { redirect_to users_path, alert: "Not authorized" }
+  #   #   format.json { head :forbidden }
+  #   # end
+  #   respond_to do |format|
+  #     format.html { render file: Rails.root.join("public/403.html"), status: :forbidden }
+  #     format.json { head :forbidden }
+  #   end
+  # end
+
+  # def policy_for(record)
+  #   klass =
+  #     if record.is_a?(Class)
+  #       record
+  #     else
+  #       record.class
+  #     end
+  #   "#{klass}Policy".constantize.new(current_user, record)
+  # end
 end

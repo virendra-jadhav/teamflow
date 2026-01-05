@@ -1,34 +1,44 @@
-class UserPolicy
-  attr_reader :current_user, :record
-
-  def initialize(current_user, record)
-    @current_user = current_user
-    @record = record
+class UserPolicy < ApplicationPolicy
+  def index?
+    user.admin?
   end
 
-  def index?
-  current_user&.admin?
-end
-
-
   def create?
-    current_user&.admin?
+    user.admin?
   end
 
   def update?
-    current_user&.admin? || owns_record?
+    user.admin? || record == user
   end
 
   def destroy?
-    current_user&.admin?
-  end
-   def update_role?
-    current_user.admin?
+    user.admin?
   end
 
-  private
-
-  def owns_record?
-    current_user.present? && current_user == record
+  def update_role?
+    user.admin?
   end
+
+  # -------------------------
+  # SCOPE
+  # -------------------------
+  class Scope < Scope
+    def resolve
+      if user.admin?
+        scope.all
+      else
+        scope.where(id: user.id)
+      end
+    end
+  end
+
+  # -------------------------
+  # ❌ OLD POLICY (REFERENCE)
+  # -------------------------
+  # attr_reader :current_user, :record
+  #
+  # def initialize(current_user, record)
+  #   @current_user = current_user
+  #   @record = record
+  # end
 end

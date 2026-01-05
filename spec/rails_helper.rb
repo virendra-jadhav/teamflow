@@ -79,4 +79,9 @@ RSpec.configure do |config|
   # Factory Bot
   config.include FactoryBot::Syntax::Methods
   config.include AuthHelpers, type: :request
+
+   # system test
+   config.before(:each, type: :system) do
+    driven_by :rack_test
+  end
 end

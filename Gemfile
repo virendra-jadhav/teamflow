@@ -55,6 +55,8 @@ group :development, :test do
   # gem 'pry-rails'
   # Optional: adds step-by-step debugging (next, step, continue)
   gem "pry-byebug"
+
+  gem "factory_bot_rails"
 end
 
 group :development do

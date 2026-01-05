@@ -63,7 +63,6 @@ class ApplicationController < ActionController::Base
       else
         record.class
       end
-
     "#{klass}Policy".constantize.new(current_user, record)
   end
 end

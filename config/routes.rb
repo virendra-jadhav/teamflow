@@ -24,7 +24,10 @@ Rails.application.routes.draw do
   # root "posts#index"
 
 
-  resources :users, only: [ :index, :new, :create, :edit, :update, :destroy ]
+  # resources :users, only: [ :index, :new, :create, :edit, :update, :destroy ]
+  resources :users do
+    patch :update_role, on: :member
+  end
 
   # login
   get "/login", to: "sessions#new"
@@ -51,4 +54,7 @@ Rails.application.routes.draw do
   # resend email
   get  "/resend_confirmation", to: "email_confirmations#new"
   post "/resend_confirmation", to: "email_confirmations#create"
+
+  # unlock account
+  get "/unlock_account", to: "account_unlocks#edit", as: :unlock_account
 end

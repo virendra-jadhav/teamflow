@@ -22,6 +22,9 @@ end
   def destroy?
     current_user&.admin?
   end
+   def update_role?
+    current_user.admin?
+  end
 
   private
 

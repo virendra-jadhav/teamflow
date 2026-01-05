@@ -1,11 +1,12 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [ :edit, :update, :destroy ]
+  before_action :set_user, only: [ :edit, :update, :destroy, :update_role ]
 
   # Authorization
   before_action :authorize_index,  only: :index
   before_action :authorize_create, only: [ :new, :create ]
   before_action :authorize_update, only: [ :edit, :update ]
   before_action :authorize_destroy, only: :destroy
+  before_action :authorize_role_update, only: :update_role
 
   skip_before_action :require_login, only: [ :new, :create ]
 
@@ -50,7 +51,13 @@ class UsersController < ApplicationController
     @user.destroy
     redirect_to users_path, notice: "User deleted successfully"
   end
-
+  def update_role
+    if Users::UpdateRole.new(@user, params[:role]).call
+      redirect_to users_path, notice: "Role updated"
+    else
+      redirect_to users_path, alert: "Invalid role"
+    end
+  end
   private
 
   def set_user
@@ -73,6 +80,9 @@ class UsersController < ApplicationController
 
   def authorize_destroy
     authorize!(@user, :destroy)
+  end
+  def authorize_role_update
+    authorize!(@user, :update_role)
   end
 
   def user_params

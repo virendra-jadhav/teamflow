@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_secure_password
   MAX_LOGIN_ATTEMPTS = 5
   LOCK_DURATION = 30.minutes
+  RESET_TOKEN_EXPIRY = 2.hours
 
   validates :name, presence: true
   validates :email,
@@ -9,14 +10,62 @@ class User < ApplicationRecord
            uniqueness: true,
            format: { with: URI::MailTo::EMAIL_REGEXP }
 
+
+  # before, but this is newest syntax
   enum :role, { member: "member", admin: "admin" }
+  # after
+  # enum role: {
+  #   member: "member",
+  #   admin: "admin"
+  # }
+
+
   validates :role, presence: true
   validates :password, presence: true, on: :create
+  scope :confirmed, -> { where.not(confirmed_at: nil) }
 
-  around_save :handle_unique_email_violation
+  # we remove this because if admin created user
+  # they also have to confirm their email but
+  # if admin created then they are verified user so it is broke rule
+  # this is move to service object because it is workflow concern not DB invarient.
+  # before_create :set_confirmation_token
+
+
+
+  # we handle this error in service object
+  # because it is break rails model rules
+  # around_save :handle_unique_email_violation
+  #
+
+
+
+  # Confirmation mail
+
+  def confirmed?
+    confirmed_at.present?
+  end
+  def confirm!
+    update!(
+      confirmed_at: Time.current,
+      confirmation_token: nil
+    )
+  end
+  def confirmation_expired?
+    confirmation_sent_at < 2.days.ago
+  end
+
+  # resend email confirmation
+  def regenerate_confirmation!
+    update!(
+      confirmation_token: SecureRandom.urlsafe_base64(32),
+      confirmation_sent_at: Time.current
+    )
+  end
+
+
 
   # Password reset functionality
-  RESET_TOKEN_EXPIRY = 2.hours
+
 
   def generate_password_reset!
     token = SecureRandom.urlsafe_base64(32)
@@ -38,29 +87,8 @@ class User < ApplicationRecord
     )
   end
 
-  # Confirmation mail
-  before_create :set_confirmation_token
-  scope :confirmed, -> { where.not(confirmed_at: nil) }
-  def confirmed?
-    confirmed_at.present?
-  end
-  def confirm!
-    update!(
-      confirmed_at: Time.current,
-      confirmation_token: nil
-    )
-  end
-  def confirmation_expired?
-    confirmation_sent_at < 2.days.ago
-  end
 
-  # resend email confirmation
-  def regenerate_confirmation!
-    update!(
-      confirmation_token: SecureRandom.urlsafe_base64(32),
-      confirmation_sent_at: Time.current
-    )
-  end
+
 
   # -------------------------
   # Remember-me logic
@@ -89,8 +117,14 @@ class User < ApplicationRecord
         locked_at.present? && locked_at > LOCK_DURATION.ago
   end
   def increment_failed_attempts!
-    increment!(:failed_attempts)
-    lock! if failed_attempts >= MAX_LOGIN_ATTEMPTS
+    # increment!(:failed_attempts)
+    # lock! if failed_attempts >= MAX_LOGIN_ATTEMPTS
+    #
+    # for concurrency we have to add lock because if two or more process increment failed attemps would be problem
+    with_lock do
+      increment!(:failed_attempts)
+      lock! if failed_attempts >= MAX_LOGIN_ATTEMPTS
+    end
   end
   def reset_failed_attempts!
     update!(failed_attempts: 0)
@@ -126,6 +160,13 @@ class User < ApplicationRecord
   def set_confirmation_token
     self.confirmation_token = SecureRandom.urlsafe_base64(32)
     self.confirmation_sent_at = Time.current
+  end
+
+  def generate_confirmation!
+    update!(
+      confirmation_token: SecureRandom.urlsafe_base64(32),
+      confirmation_sent_at: Time.current
+    )
   end
 
   def handle_unique_email_violation

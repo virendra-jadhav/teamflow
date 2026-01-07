@@ -15,8 +15,6 @@ module Users
       # true
 
       return true if @params.empty?
-      puts @params.inspect
-      puts @user
       @user.update(@params)
     end
   end

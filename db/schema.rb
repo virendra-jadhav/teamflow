@@ -10,16 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_07_175632) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_08_121707) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_accounts_on_name"
+  end
+
+  create_table "memberships", force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "account_id", null: false
+    t.string "role", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_memberships_on_account_id"
+    t.index ["user_id", "account_id"], name: "index_memberships_on_user_id_and_account_id", unique: true
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying, 'member'::character varying]::text[])", name: "memberships_role_check"
+  end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "role", default: "member", null: false
     t.string "password_digest"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -33,8 +51,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_07_175632) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["role"], name: "index_users_on_role"
     t.index ["unlock_token_digest"], name: "index_users_on_unlock_token_digest"
-    t.check_constraint "role::text = ANY (ARRAY['member'::character varying, 'admin'::character varying]::text[])", name: "users_role_check"
   end
+
+  add_foreign_key "memberships", "accounts"
+  add_foreign_key "memberships", "users"
 end

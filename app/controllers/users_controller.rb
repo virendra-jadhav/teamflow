@@ -7,7 +7,8 @@ class UsersController < ApplicationController
     # # authorize!(User, :index)
     # @users = User.order(created_at: :desc)
     authorize User
-    @users = policy_scope(User)
+    # @users = policy_scope(User)
+    @users = current_account.users 
   end
 
   def new

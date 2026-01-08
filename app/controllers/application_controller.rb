@@ -49,6 +49,16 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def current_account 
+    return @current_account if defined?(@current_account)
+
+    return nil unless session[:current_account_id]
+    return nil unless current_user 
+
+    @current_account = current_user.accounts.find_by(id: session[:current_account_id])
+    
+  end
+
   def user_not_authorized
     respond_to do |format|
       format.html { render file: Rails.root.join("public/403.html"), status: :forbidden }

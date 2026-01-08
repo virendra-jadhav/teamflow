@@ -15,9 +15,9 @@
   "prettier.trailingComma": "es5",
   "prettier.printWidth": 100,
 
-  "[ruby]": {
-    "editor.defaultFormatter": "misogi.ruby-rubocop"
-  },
+  // "[ruby]": {
+  //   "editor.defaultFormatter": "misogi.ruby-rubocop"
+  // },
 
   "[erb]": {
     "editor.defaultFormatter": "aliariff.vscode-erb-beautify",
@@ -39,9 +39,9 @@
   "ruby.useLanguageServer": false,
 
   "rubyLsp.bundleGemfile": true,
-  "rubyLsp.formatter": "rubocop",
+  // "rubyLsp.formatter": "rubocop",
 
-  "ruby.rubocop.autocorrectOnSave": false,
+  // "ruby.rubocop.autocorrectOnSave": false,
 
   // =========================
   // Files

@@ -24,12 +24,17 @@ class SessionsController < ApplicationController
         render :new, status: :unauthorized
         return
       end
-
+      # reset_session prevent from session fixation
+      reset_session
       session[:user_id] = user.id
       if params[:remember_me] == "1"
         user.remember!
         cookies.permanent.signed[:remember_token] = user.remember_token
-        cookies.permanent.signed[:remember_user_id] = user.id
+        # cookies.permanent.signed[:remember_user_id] = user.id
+        cookies.permanent.signed[:remember_user_id] = {
+                          value: user.id,
+                          httponly: true
+                        }
       end
 
       redirect_to home_path, notice: "Logged in"
@@ -48,7 +53,8 @@ class SessionsController < ApplicationController
     if current_user
       current_user.forget!
     end
-    session.delete(:user_id)
+    # session.delete(:user_id)
+    reset_session
     cookies.delete(:remember_token)
     cookies.delete(:remember_user_id)
 

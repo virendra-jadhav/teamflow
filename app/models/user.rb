@@ -4,6 +4,14 @@ class User < ApplicationRecord
   LOCK_DURATION = 30.minutes
   RESET_TOKEN_EXPIRY = 2.hours
 
+
+  # ASSOCIATIONS
+  has_many :memberships, dependent: :destroy
+  has_many :accounts, through: :memberships
+
+
+  # VALIDATIONS
+
   validates :name, presence: true
   validates :email,
            presence: true,
@@ -11,16 +19,17 @@ class User < ApplicationRecord
            format: { with: URI::MailTo::EMAIL_REGEXP }
 
 
-  # before, but this is newest syntax
-  enum :role, { member: "member", admin: "admin" }
-  # after
-  # enum role: {
-  #   member: "member",
-  #   admin: "admin"
-  # }
+  # we set role inside membership
+  # # before, but this is newest syntax
+  # enum :role, { member: "member", admin: "admin" }
+  # # after
+  # # enum role: {
+  # #   member: "member",
+  # #   admin: "admin"
+  # # }
+  # validates :role, presence: true
 
 
-  validates :role, presence: true
   validates :password, presence: true, on: :create
   scope :confirmed, -> { where.not(confirmed_at: nil) }
 

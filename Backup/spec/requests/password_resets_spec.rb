@@ -7,7 +7,7 @@ RSpec.describe "Password reset", type: :request do
       email: "user@test.com",
       password: "password",
       password_confirmation: "password",
-      # role: "member"
+      role: "member"
     )
   end
 

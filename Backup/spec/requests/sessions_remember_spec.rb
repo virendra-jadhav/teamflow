@@ -7,7 +7,7 @@ RSpec.describe "Remember me", type: :request do
       email: "remember@test.com",
       password: "password",
       password_confirmation: "password",
-      # role: "member",
+      role: "member",
       confirmed_at: Time.current
     )
   end

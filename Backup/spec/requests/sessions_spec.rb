@@ -7,7 +7,7 @@ RSpec.describe "Sessions", type: :request do
       email: "user@test.com",
       password: "password",
       password_confirmation: "password",
-      # role: "member",
+      role: "member",
       confirmed_at: Time.current
     )
   end

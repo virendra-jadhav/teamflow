@@ -22,7 +22,7 @@ class UserPolicy < ApplicationPolicy
   private
 
   def membership
-    @membership ||= user.memberships.find_by(account: current_account)
+    @membership ||= user.memberships.find_by(account: account)
   end
 end
 

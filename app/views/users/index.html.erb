@@ -1,47 +1,36 @@
 <h1>Users</h1>
 
-<p>
-  <%= link_to "Create New User", new_user_path %>
-</p>
-
-<table border="1" cellpadding="8">
+<table>
   <thead>
     <tr>
       <th>Name</th>
       <th>Email</th>
-      <th>Actions</th>
+
+      <% if current_membership&.admin? %>
       <th>Role</th>
+      <th>Actions</th>
+      <% end %>
     </tr>
   </thead>
 
   <tbody>
     <% @users.each do |user| %>
+    <% membership = user.memberships.find_by(account: current_account) %>
+
     <tr>
       <td><%= user.name %></td>
       <td><%= user.email %></td>
+
+      <% if current_membership&.admin? %>
+      <td><%= membership.role %></td>
+
       <td>
-        <%= link_to "Edit", edit_user_path(user) %> |
-        <%= button_to "Delete",
-              user_path(user),
-              method: :delete,
-              data: { confirm: "Are you sure?" },
-              form: { style: "display:inline" } %>
-
-
+        <%= button_to "Update Role",
+                  update_role_user_path(user),
+                  method: :patch,
+                  params: { role: "admin" } %>
       </td>
-      <td>
-        <%= user.role %>
-        <%# <% if current_user.admin? && current_user != user %>
-        <% if policy(user).update_role? %>
-        <%= form_with url: update_role_user_path(user),
-          method: :patch, local: true do |f|
-        %>
-        <%= select_tag :role, options_for_select(User.roles.keys, user.role) %>
-        <%= f.submit "Update Role" %>
-        <% end %>
-        <% end %>
-      </td>
-
+      <% end %>
     </tr>
     <% end %>
   </tbody>

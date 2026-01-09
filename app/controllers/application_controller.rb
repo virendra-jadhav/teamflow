@@ -7,14 +7,30 @@ class ApplicationController < ActionController::Base
   before_action :require_login
 
   helper_method :current_user
+  helper_method :current_account, :current_membership
+
+  require "ostruct"
+
+
+  # -------------------------
+  # PUNDIT
+  # -------------------------
+  include Pundit::Authorization
+
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   def require_login
     return if current_user
     redirect_to login_path, alert: "Please log in"
   end
 
-
-  private
+  # Auth context
+  def pundit_user
+    OpenStruct.new(
+      user: current_user,
+      account: current_account
+    )
+  end
 
   def current_user
     # return @current_user if defined?(@current_user)
@@ -39,25 +55,31 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
   # -------------------------
-  # PUNDIT
+  # CURRENT ACCOUNT
   # -------------------------
-  include Pundit::Authorization
+  def current_account
+    return @current_account if defined?(@current_account)
+    return nil unless current_user && session[:current_account_id]
 
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+    @current_account = current_user.accounts.find_by(
+      id: session[:current_account_id]
+    )
+  end
+  # -------------------------
+  # CURRENT MEMBERSHIP
+  # -------------------------
+  def current_membership
+    return nil unless current_user && current_account
+
+    @current_membership ||= current_user.memberships.find_by(
+      account: current_account
+    )
+  end
+
 
   private
 
-  def current_account 
-    return @current_account if defined?(@current_account)
-
-    return nil unless session[:current_account_id]
-    return nil unless current_user 
-
-    @current_account = current_user.accounts.find_by(id: session[:current_account_id])
-    
-  end
 
   def user_not_authorized
     respond_to do |format|

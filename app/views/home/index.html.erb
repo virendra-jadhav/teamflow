@@ -1,12 +1,10 @@
-<h1>Welcome, <%= current_user.name %></h1>
+<h1>Home</h1>
 
-<p>Your role: <%= current_user.role %></p>
+<p>
+  Your role:
+  <%= current_membership&.role || "No account selected" %>
+</p>
 
-<nav>
-  <% if current_user.admin? %>
-  <%= link_to "Manage Users", users_path %> |
-  <%= link_to "Edit Profile", edit_user_path(current_user) %>
-  <% end %>
-
-  <%= button_to "Logout", logout_path, method: :delete %>
-</nav>
+<% if current_membership&.admin? %>
+<p>You are an admin</p>
+<% end %>

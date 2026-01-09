@@ -5,32 +5,40 @@ class User < ApplicationRecord
   RESET_TOKEN_EXPIRY = 2.hours
 
 
+  # -------------------------
   # ASSOCIATIONS
+  # -------------------------
   has_many :memberships, dependent: :destroy
   has_many :accounts, through: :memberships
 
 
+  # -------------------------
   # VALIDATIONS
-
+  # -------------------------
   validates :name, presence: true
   validates :email,
-           presence: true,
-           uniqueness: true,
-           format: { with: URI::MailTo::EMAIL_REGEXP }
+            presence: true,
+            uniqueness: true,
+            format: { with: URI::MailTo::EMAIL_REGEXP }
 
 
-  # we set role inside membership
-  # # before, but this is newest syntax
-  # enum :role, { member: "member", admin: "admin" }
-  # # after
-  # # enum role: {
-  # #   member: "member",
-  # #   admin: "admin"
-  # # }
-  # validates :role, presence: true
+
+   # we set role inside membership
+   # # before, but this is newest syntax
+   # enum :role, { member: "member", admin: "admin" }
+   # # after
+   # # enum role: {
+   # #   member: "member",
+   # #   admin: "admin"
+   # # }
+   # validates :role, presence: true
 
 
-  validates :password, presence: true, on: :create
+   # validates :password, presence: true, on: :create
+   # scope :confirmed, -> { where.not(confirmed_at: nil) }
+   #
+   validates :password, presence: true, on: :create
+
   scope :confirmed, -> { where.not(confirmed_at: nil) }
 
   # we remove this because if admin created user
@@ -48,7 +56,9 @@ class User < ApplicationRecord
 
 
 
-  # Confirmation mail
+  # -------------------------
+  # CONFIRMATION Email
+  # -------------------------
 
   def confirmed?
     confirmed_at.present?
@@ -60,11 +70,19 @@ class User < ApplicationRecord
     )
   end
   def confirmation_expired?
+    # confirmation_sent_at < 2.days.ago
+    return true if confirmation_sent_at.nil?
     confirmation_sent_at < 2.days.ago
   end
 
   # resend email confirmation
   def regenerate_confirmation!
+    update!(
+      confirmation_token: SecureRandom.urlsafe_base64(32),
+      confirmation_sent_at: Time.current
+    )
+  end
+  def generate_confirmation!
     update!(
       confirmation_token: SecureRandom.urlsafe_base64(32),
       confirmation_sent_at: Time.current
@@ -122,6 +140,10 @@ class User < ApplicationRecord
 
 
   ### locking functionality
+  #
+  # -------------------------
+  # LOCKING
+  # -------------------------
   def locked?
         locked_at.present? && locked_at > LOCK_DURATION.ago
   end
@@ -132,14 +154,15 @@ class User < ApplicationRecord
     # for concurrency we have to add lock because if two or more process increment failed attemps would be problem
     with_lock do
       increment!(:failed_attempts)
-      lock! if failed_attempts >= MAX_LOGIN_ATTEMPTS
+      lock_account! if failed_attempts >= MAX_LOGIN_ATTEMPTS
     end
   end
   def reset_failed_attempts!
     update!(failed_attempts: 0)
   end
 
-  def lock!
+  # def lock!
+  def lock_account!
     update!(
       locked_at: Time.current,
       failed_attempts: MAX_LOGIN_ATTEMPTS
@@ -164,6 +187,7 @@ class User < ApplicationRecord
     BCrypt::Password.new(unlock_token_digest).is_password?(token)
   end
 
+
   private
 
   def set_confirmation_token
@@ -171,12 +195,7 @@ class User < ApplicationRecord
     self.confirmation_sent_at = Time.current
   end
 
-  def generate_confirmation!
-    update!(
-      confirmation_token: SecureRandom.urlsafe_base64(32),
-      confirmation_sent_at: Time.current
-    )
-  end
+
 
   def handle_unique_email_violation
     yield

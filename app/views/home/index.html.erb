@@ -1,6 +1,15 @@
 <h1>Welcome, <%= current_user.name %></h1>
 
+<%
+=begin%>
 <p>Your role: <%= current_user.role %></p>
+<%
+=end%>
+<% if current_account && current_membership %>
+Your role: <%= current_membership.role %>
+<% else %>
+No account selected
+<% end %>
 
 <nav>
   <% if current_user.admin? %>

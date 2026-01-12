@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_action :require_login
 
-  helper_method :current_user
+  helper_method :current_user, :current_account, :current_membership
 
   def require_login
     return if current_user
@@ -49,14 +49,13 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def current_account 
+  def current_account
     return @current_account if defined?(@current_account)
 
     return nil unless session[:current_account_id]
-    return nil unless current_user 
+    return nil unless current_user
 
     @current_account = current_user.accounts.find_by(id: session[:current_account_id])
-    
   end
 
   def user_not_authorized

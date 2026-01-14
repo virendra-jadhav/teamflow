@@ -1,30 +1,23 @@
 require "rails_helper"
 
 RSpec.describe "User update without password", type: :request do
-  let!(:admin) do
-    User.create!(
-      name: "Admin",
-      email: "admin2@test.com",
-      password: "password",
-      password_confirmation: "password",
-      role: "admin",
-      confirmed_at: Time.current
-    )
+  let(:account) { create(:account) }
+
+  let(:admin) do
+    user = create(:user, confirmed_at: Time.current)
+    create(:membership, :admin, user: user, account: account)
+    user
   end
 
-  let!(:user) do
-    User.create!(
-      name: "User",
-      email: "user@test.com",
-      password: "password",
-      password_confirmation: "password",
-      role: "member",
-      confirmed_at: Time.current
-    )
+  let(:user) do
+    user = create(:user, confirmed_at: Time.current)
+    create(:membership, user: user, account: account)
+    user
   end
 
   before do
     post login_path, params: { email: admin.email, password: "password" }
+    post account_switch_path(account_id: account.id)
   end
 
   it "updates user without changing password" do

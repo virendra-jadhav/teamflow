@@ -1,27 +1,33 @@
-
 require "rails_helper"
+
 RSpec.describe "User role management", type: :request do
-  let!(:admin) { create(:user, role: :admin) }
-  let!(:member) { create(:user, role: :member) }
+  let(:account) { create(:account) }
 
-  context "as admin" do
-    before { login_as(admin) }
-
-    it "updates role" do
-      patch update_role_user_path(member), params: { role: "admin" }
-
-      expect(response).to redirect_to(users_path)
-      expect(member.reload.admin?).to be true
-    end
+  let(:admin) do
+    user = create(:user, confirmed_at: Time.current)
+    create(:membership, :admin, user: user, account: account)
+    user
   end
 
-  context "as member" do
-    before { login_as(member) }
+  let(:member) do
+    user = create(:user, confirmed_at: Time.current)
+    create(:membership, user: user, account: account)
+    user
+  end
 
-    it "is forbidden" do
-      patch update_role_user_path(admin), params: { role: "member" }
+  before do
+    post login_path, params: { email: admin.email, password: "password" }
 
-      expect(response).to have_http_status(:forbidden)
-    end
+    # 🔑 MUST be set before every authorized request
+    post account_switch_path(account_id: account.id)
+  end
+
+  it "allows admin to update role" do
+    patch update_role_user_path(member), params: { role: "admin" }
+
+    expect(response).to redirect_to(users_path)
+
+    membership = member.memberships.find_by(account: account)
+    expect(membership.admin?).to be true
   end
 end

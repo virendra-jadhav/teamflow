@@ -12,6 +12,9 @@ RSpec.describe "Email Confirmations", type: :request do
       password_confirmation: "user"
     )
   end
+  before do
+    user.regenerate_confirmation!
+  end
   it "confirms email successfully" do
     token = user.confirmation_token
     get confirm_email_path(token: token)

@@ -1,29 +1,24 @@
 class ApplicationPolicy
   attr_reader :user, :record, :account
 
-  # Pundit calls this automatically
-  def initialize(pundit_user, record)
-    @user    = pundit_user.user
-    @account = pundit_user.account
-    @record  = record
+  def initialize(context, record)
+    @user   = context.user     # current_user
+    @record = record   # model or class
+    @account = context.account
   end
 
-  # -------------------------
-  # SCOPE (optional for later)
-  # -------------------------
-  class Scope
-    attr_reader :user, :scope, :account
+    class Scope
+    attr_reader :context, :scope
 
-    def initialize(pundit_user, scope)
-      @user    = pundit_user.user
-      @account = pundit_user.account
-      @scope   = scope
+    def initialize(context, scope)
+      @context  = context
+      @scope = scope
     end
 
     def resolve
       scope.none
     end
-  end
+    end
 end
 
 

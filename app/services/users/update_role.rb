@@ -1,13 +1,20 @@
 module Users
   class UpdateRole
-    def initialize(user, role)
-      @user = user
-      @role = role
+    VALID_ROLES = %w[member admin].freeze
+
+    def initialize(user, account, role)
+      @user    = user
+      @account = account
+      @role    = role
     end
 
     def call
-      return false unless User.roles.key?(@role)
-      @user.update(role: @role)
+      return false unless VALID_ROLES.include?(@role)
+
+      membership = @user.memberships.find_by(account: @account)
+      return false unless membership
+
+      membership.update(role: @role)
     end
   end
 end

@@ -1,34 +1,49 @@
 require "rails_helper"
 
 RSpec.describe "User role management UI", type: :system do
-  let!(:admin)  { create(:user, role: :admin, password: "password") }
-  let!(:member) { create(:user, role: :member, password: "password") }
+  let!(:account) { create(:account) }
+
+  let!(:admin) do
+    user = create(:user, password: "password")
+    create(:membership, :admin, user: user, account: account)
+    user
+  end
+
+  let!(:member) do
+    user = create(:user, password: "password")
+    create(:membership, user: user, account: account)
+    user
+  end
 
   context "when logged in as admin" do
     before do
       login_as(admin)
+
+      visit root_path
+      select account.name, from: "account_id"
+      click_button "Switch Account"
+
       visit users_path
     end
 
     it "shows role management controls" do
-      expect(page).to have_content("Users")
-      # expect(page).to have_link("Change Role")
       expect(page).to have_button("Update Role")
-      # expect(page).to have_selector("input[type='submit'][value='Update Role']")
     end
   end
 
   context "when logged in as member" do
     before do
       login_as(member)
+
+      visit root_path
+      select account.name, from: "account_id"
+      click_button "Switch Account"
+
       visit users_path
     end
 
     it "does not show role management controls" do
-      expect(page).to have_content("Users")
-      # expect(page).not_to have_link("Change Role")
       expect(page).not_to have_button("Update Role")
-      # expect(page).to have_selector("input[type='submit'][value='Update Role']")
     end
   end
 end

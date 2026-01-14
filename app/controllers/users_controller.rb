@@ -2,11 +2,13 @@ class UsersController < ApplicationController
   before_action :set_user, only: [ :edit, :update, :destroy, :update_role ]
 
   # skip_before_action :require_login, only: [ :new, :create ]
-  before_action :ensure_account_selected
+  skip_before_action :require_login, only: %i[new create]
 
   def index
     # # authorize!(User, :index)
     # @users = User.order(created_at: :desc)
+    # authorize User
+    # authorize User, policy_class: UserPolicy, account: current_account
     authorize User
     # @users = policy_scope(User)
     @users = current_account.users
@@ -15,6 +17,8 @@ class UsersController < ApplicationController
   def new
     # # authorize!(User, :create)
     # @user = User.new
+    # authorize User
+    # authorize User, policy_class: UserPolicy, account: current_account
     authorize User
     @user = User.new
   end
@@ -29,6 +33,8 @@ class UsersController < ApplicationController
     # else
     #   render :new, status: :unprocessable_entity
     # end
+    # authorize User
+    # authorize User, policy_class: UserPolicy, account: current_account
     authorize User
     @user = Users::Create.new(user_params).call
 
@@ -41,6 +47,8 @@ class UsersController < ApplicationController
 
   def edit
     # authorize!(User, :update)
+    # authorize @user
+    # authorize @user, policy_class: UserPolicy, account: current_account
     authorize @user
   end
 
@@ -52,6 +60,8 @@ class UsersController < ApplicationController
      #  else
      #   render :edit, status: :unprocessable_entity
      #  end
+     #  authorize @user
+     #  authorize @user, policy_class: UserPolicy, account: current_account
      authorize @user
     if Users::Update.new(@user, user_params).call
       redirect_to edit_user_path(@user), notice: "User updated successfully"
@@ -61,10 +71,12 @@ class UsersController < ApplicationController
   end
 
   def destroy
-     # # authorize!(User, :destroy)
-     # @user.destroy
-     # redirect_to users_path, notice: "User deleted successfully"
-     authorize @user
+    # # authorize!(User, :destroy)
+    # @user.destroy
+    # redirect_to users_path, notice: "User deleted successfully"
+    #  authorize @user
+    #  authorize @user, policy_class: UserPolicy, account: current_account
+    authorize @user
     @user.destroy
     redirect_to users_path, notice: "User deleted successfully"
   end
@@ -74,8 +86,10 @@ class UsersController < ApplicationController
     # else
     #   redirect_to users_path, alert: "Invalid role"
     # end
+    # authorize @user, :update_role?
+    # authorize @user, :update_role?, policy_class: UserPolicy, account: current_account
     authorize @user, :update_role?
-    if Users::UpdateRole.new(@user, params[:role]).call
+    if Users::UpdateRole.new(@user, current_account, params[:role]).call
       redirect_to users_path, notice: "Role updated"
     else
       redirect_to users_path, alert: "Invalid role"
@@ -114,6 +128,7 @@ class UsersController < ApplicationController
 
   def user_params
     permitted = params.require(:user).permit(:name, :email, :password, :password_confirmation).to_h
+    # .reject { |_, v| v.blank? }
     if permitted[:password].blank?
       permitted.delete(:password)
       permitted.delete(:password_confirmation)

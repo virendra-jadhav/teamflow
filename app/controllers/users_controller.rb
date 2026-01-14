@@ -1,14 +1,15 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [ :edit, :update, :destroy, :update_role ]
 
-  skip_before_action :require_login, only: [ :new, :create ]
+  # skip_before_action :require_login, only: [ :new, :create ]
+  before_action :ensure_account_selected
 
   def index
     # # authorize!(User, :index)
     # @users = User.order(created_at: :desc)
     authorize User
     # @users = policy_scope(User)
-    @users = current_account.users 
+    @users = current_account.users
   end
 
   def new
@@ -44,13 +45,13 @@ class UsersController < ApplicationController
   end
 
   def update
-    #  # authorize!(User, :update)
-    #  # if @user.update(user_params)
-    #  if Users::Update.new(@user, user_params).call
-    #   redirect_to edit_user_path(@user), notice: "User updated successfully"
-    #  else
-    #   render :edit, status: :unprocessable_entity
-    #  end
+     #  # authorize!(User, :update)
+     #  # if @user.update(user_params)
+     #  if Users::Update.new(@user, user_params).call
+     #   redirect_to edit_user_path(@user), notice: "User updated successfully"
+     #  else
+     #   render :edit, status: :unprocessable_entity
+     #  end
      authorize @user
     if Users::Update.new(@user, user_params).call
       redirect_to edit_user_path(@user), notice: "User updated successfully"
@@ -60,9 +61,9 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    # # authorize!(User, :destroy)
-    # @user.destroy
-    # redirect_to users_path, notice: "User deleted successfully"
+     # # authorize!(User, :destroy)
+     # @user.destroy
+     # redirect_to users_path, notice: "User deleted successfully"
      authorize @user
     @user.destroy
     redirect_to users_path, notice: "User deleted successfully"
@@ -86,6 +87,10 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def ensure_account_selected
+    return if current_account
+    redirect_to root_path, alert: "Please create or select account first"
+  end
 
 
   # def authorize_index

@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   # protect_from_forgery with: :null_session
   protect_from_forgery with: :exception
+  require "ostruct"
+
 
 
   before_action :require_login
@@ -12,6 +14,21 @@ class ApplicationController < ActionController::Base
     return if current_user
     redirect_to login_path, alert: "Please log in"
   end
+
+  # -------------------------
+  # PUNDIT
+  # -------------------------
+  include Pundit::Authorization
+
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  def pundit_user
+    OpenStruct.new(
+      user: current_user,
+      account: current_account
+    )
+  end
+
 
 
   private
@@ -40,15 +57,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # -------------------------
-  # PUNDIT
-  # -------------------------
-  include Pundit::Authorization
-
-  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
-
-  private
-
   def current_account
     return @current_account if defined?(@current_account)
 
@@ -56,6 +64,10 @@ class ApplicationController < ActionController::Base
     return nil unless current_user
 
     @current_account = current_user.accounts.find_by(id: session[:current_account_id])
+  end
+  def current_membership
+    return nil unless current_user && current_account
+    @current_membership ||= current_user.memberships.find_by(account: current_account)
   end
 
   def user_not_authorized

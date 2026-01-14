@@ -101,6 +101,10 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def ensure_account_selected
+    return if current_account
+    redirect_to root_path, alert: "Please create or select account first"
+  end
 
 
   # def authorize_index

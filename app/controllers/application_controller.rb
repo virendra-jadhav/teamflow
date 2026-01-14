@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   # protect_from_forgery with: :null_session
   protect_from_forgery with: :exception
+  require "ostruct"
+
 
 
   before_action :require_login

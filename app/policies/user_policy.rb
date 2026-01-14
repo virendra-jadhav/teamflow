@@ -22,6 +22,8 @@ class UserPolicy < ApplicationPolicy
   private
 
   def membership
+    return nil unless user && account
+   # user.memberships.find_by(account: current_account)
     @membership ||= user.memberships.find_by(account: account)
   end
 end

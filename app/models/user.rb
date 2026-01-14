@@ -197,10 +197,10 @@ class User < ApplicationRecord
 
 
 
-  def handle_unique_email_violation
-    yield
-  rescue ActiveRecord::RecordNotUnique
-    errors.add(:email, "has already been taken")
-    throw(:abort)
-  end
+  # def handle_unique_email_violation
+  #   yield
+  # rescue ActiveRecord::RecordNotUnique
+  #   errors.add(:email, "has already been taken")
+  #   throw(:abort)
+  # end
 end

@@ -6,9 +6,15 @@
 <%
 =end%>
 <% if current_account && current_membership %>
-Your role: <%= current_membership.role %>
+<p>
+  Account: <%= current_account.name %><br>
+  Your role: <%= current_membership.role %>
+</p>
+
+<%= link_to "Users", users_path %>
 <% else %>
-No account selected
+<p>No account selected.</p>
+<%= link_to "Create Account", new_account_path %>
 <% end %>
 
 <nav>

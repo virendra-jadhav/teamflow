@@ -59,5 +59,9 @@ Rails.application.routes.draw do
   get "/unlock_account", to: "account_unlocks#edit", as: :unlock_account
 
   # to switch account
-  resource :account_switch, only: [:create], controller: "accounts/switch"
+  resource :account_switch, only: [ :create ], controller: "accounts/switch"
+
+
+  # accounts
+  resources :accounts, only: [ :new, :create ]
 end

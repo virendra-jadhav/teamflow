@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_08_121707) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_14_173002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_08_121707) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_accounts_on_name"
+  end
+
+  create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "account_id", null: false
+    t.string "email", null: false
+    t.string "role", null: false
+    t.string "token", null: false
+    t.uuid "invited_by_id", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "email"], name: "index_invitations_on_account_id_and_email"
+    t.index ["account_id"], name: "index_invitations_on_account_id"
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["token"], name: "index_invitations_on_token", unique: true
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -30,7 +46,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_08_121707) do
     t.index ["account_id"], name: "index_memberships_on_account_id"
     t.index ["user_id", "account_id"], name: "index_memberships_on_user_id_and_account_id", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
-    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying, 'member'::character varying]::text[])", name: "memberships_role_check"
+    t.check_constraint "role::text = ANY (ARRAY['admin'::character varying::text, 'member'::character varying::text])", name: "memberships_role_check"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -54,6 +70,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_08_121707) do
     t.index ["unlock_token_digest"], name: "index_users_on_unlock_token_digest"
   end
 
+  add_foreign_key "invitations", "accounts"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
 end

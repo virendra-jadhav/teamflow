@@ -12,7 +12,7 @@ class Invitation < ApplicationRecord
 
   validates :email, presence: true
   validates :role, presence: true, inclusion: { in: VALID_ROLES }
-  validates :token, presenct: true, uniqueness: true
+  validates :token, presence: true, uniqueness: true
   validates :expires_at, presence: true
 
   # -----------------------
@@ -33,5 +33,8 @@ class Invitation < ApplicationRecord
   end
   def usable?
     !accepted? && !expired?
+  end
+  def valid_for_acceptance?(provided_token)
+    token == provided_token && !accepted? && !expired?
   end
 end

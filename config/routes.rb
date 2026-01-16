@@ -64,4 +64,12 @@ Rails.application.routes.draw do
 
   # accounts
   resources :accounts, only: [ :new, :create ]
+
+  # invitations
+  resources :invitations, only: [] do
+  member do
+    get  :accept   # /invitations/:id/accept?token=abc
+    post :confirm  # actually performs acceptance
+  end
+end
 end

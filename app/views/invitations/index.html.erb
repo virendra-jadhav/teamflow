@@ -7,10 +7,15 @@
 <h2>Invite user</h2>
 
 <%= form_with url: invitations_path, method: :post do %>
+
+<%= label_tag :email, "User email" %>
 <%= email_field_tag :email, nil, required: true %>
 
+<%= label_tag :role, "Role" %>
 <%= select_tag :role,
-        options_for_select(Invitation::VALID_ROLES.map { |r| [r.titleize, r] }) %>
+        options_for_select(
+          Invitation::VALID_ROLES.map { |r| [r.titleize, r] }
+        ) %>
 
 <%= submit_tag "Send Invitation" %>
 <% end %>

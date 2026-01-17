@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :invitation do
-    account { nil }
-    email { "MyString" }
-    role { "MyString" }
-    token { "MyString" }
-    invited_by { nil }
-    expires_at { "2026-01-14 23:00:03" }
-    accepted_at { "2026-01-14 23:00:03" }
+    account
+    invited_by { association :user }
+    email { Faker::Internet.unique.email }
+    role { "member" }
+    token { SecureRandom.urlsafe_base64 }
+    expires_at { 7.days.from_now }
+    # accepted_at {}
   end
 end

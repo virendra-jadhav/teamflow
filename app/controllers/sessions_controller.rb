@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
-  skip_before_action :require_login, only: [ :new, :create ]
   skip_before_action :verify_authenticity_token
+  skip_before_action :require_login, only: [ :new, :create, :destroy ]
+  skip_before_action :require_account!, only: [ :new, :create, :destroy ]
 
 
 
@@ -77,6 +78,9 @@ class SessionsController < ApplicationController
     reset_session
     cookies.delete(:remember_token)
     cookies.delete(:remember_user_id)
+
+    cookies.signed[:remember_token] = nil
+    cookies.signed[:remember_user_id] = nil
 
     redirect_to login_path, notice: "Logged out"
   end

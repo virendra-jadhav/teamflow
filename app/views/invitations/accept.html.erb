@@ -1,0 +1,12 @@
+<h1>Accept Invitation</h1>
+
+<p>
+  You’ve been invited to join
+  <strong><%= @invitation.account.name %></strong>
+  as <strong><%= @invitation.role %></strong>.
+</p>
+
+<%= form_with url: confirm_invitation_path(@invitation), method: :post do %>
+<%= hidden_field_tag :token, params[:token] %>
+<%= submit_tag "Accept Invitation" %>
+<% end %>

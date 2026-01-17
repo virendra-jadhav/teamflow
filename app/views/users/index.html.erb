@@ -1,5 +1,31 @@
 <h1>Users</h1>
 
+<% if current_membership&.admin? %>
+<h2>Invite a user</h2>
+
+<%= form_with url: invitations_path, method: :post do %>
+<div>
+  <%= label_tag :email, "User email" %><br>
+  <%= email_field_tag :email, nil, required: true %>
+</div>
+
+<div>
+  <%= label_tag :role, "Role" %><br>
+  <%= select_tag :role,
+            options_for_select(
+              Invitation::VALID_ROLES.map { |r| [r.titleize, r] },
+              "member"
+            ),
+            required: true %>
+</div>
+
+<%= submit_tag "Send Invitation" %>
+<% end %>
+
+<hr>
+<% end %>
+
+
 <table>
   <thead>
     <tr>

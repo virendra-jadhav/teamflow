@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
 
   before_action :require_login
 
+  before_action :require_account!
+
   helper_method :current_user
   helper_method :current_account, :current_membership
 
@@ -24,6 +26,13 @@ class ApplicationController < ActionController::Base
   def require_login
     return if current_user
     redirect_to login_path, alert: "Please log in"
+  end
+
+  def require_account!
+    return unless current_user
+    return if current_account
+
+    redirect_to home_path, alert: "Please select an account"
   end
 
   # Auth context

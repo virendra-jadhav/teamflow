@@ -1,0 +1,57 @@
+<h1>Invitations</h1>
+
+<%= link_to "Back to Users", users_path %>
+
+<hr>
+
+<h2>Invite user</h2>
+
+<%= form_with url: invitations_path, method: :post do %>
+<%= email_field_tag :email, nil, required: true %>
+
+<%= select_tag :role,
+        options_for_select(Invitation::VALID_ROLES.map { |r| [r.titleize, r] }) %>
+
+<%= submit_tag "Send Invitation" %>
+<% end %>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Expires</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @invitations.each do |inv| %>
+    <tr>
+      <td><%= inv.email %></td>
+      <td><%= inv.role %></td>
+      <td>
+        <% if inv.accepted? %>
+        Accepted
+        <% elsif inv.expired? %>
+        Expired
+        <% else %>
+        Pending
+        <% end %>
+      </td>
+      <td><%= inv.expires_at.to_date %></td>
+      <td>
+        <% if inv.usable? %>
+        <%= button_to "Resend", resend_invitation_path(inv), method: :post %>
+        <%= button_to "Revoke", revoke_invitation_path(inv), method: :delete %>
+        <% else %>
+        —
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

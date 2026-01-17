@@ -1,0 +1,17 @@
+<h1>You’re invited to <%= @account.name %></h1>
+
+<p>
+  <%= @inviter.name %> invited you to join their account.
+</p>
+
+<p>
+  Click below to accept the invitation:
+</p>
+
+<p>
+  <a href="<%= @accept_url %>">Accept Invitation</a>
+</p>
+
+<p>
+  This invitation expires on <%= @invitation.expires_at.to_date %>.
+</p>

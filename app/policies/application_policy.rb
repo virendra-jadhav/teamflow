@@ -8,16 +8,17 @@ class ApplicationPolicy
   end
 
     class Scope
-    attr_reader :context, :scope
+      attr_reader :user, :scope, :account
 
-    def initialize(context, scope)
-      @context  = context
-      @scope = scope
-    end
+      def initialize(pundit_user, scope)
+        @user    = pundit_user.user
+        @account = pundit_user.account
+        @scope   = scope
+      end
 
-    def resolve
-      scope.none
-    end
+      def resolve
+        scope.none
+      end
     end
 end
 

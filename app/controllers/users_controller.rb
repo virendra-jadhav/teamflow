@@ -11,7 +11,9 @@ class UsersController < ApplicationController
     # authorize User, policy_class: UserPolicy, account: current_account
     authorize User
     # @users = policy_scope(User)
-    @users = current_account.users
+
+    # @users = current_account.users
+    @users = policy_scope(User)
   end
 
   def new

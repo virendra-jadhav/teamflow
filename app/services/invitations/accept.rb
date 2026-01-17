@@ -17,7 +17,7 @@ module Invitations
         Membership.create!(
           user: @user,
           account: @invitation.account,
-          role: "member"
+          role: @invitation.role
         )
 
         @invitation.update!(

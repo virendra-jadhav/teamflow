@@ -66,10 +66,12 @@ Rails.application.routes.draw do
   resources :accounts, only: [ :new, :create ]
 
   # invitations
-  resources :invitations, only: [] do
-  member do
-    get  :accept   # /invitations/:id/accept?token=abc
-    post :confirm  # actually performs acceptance
+  resources :invitations, only: [ :index, :create ] do
+    member do
+      get  :accept   # /invitations/:id/accept?token=abc
+      post :confirm  # actually performs acceptance
+      post :resend
+      delete :revoke
+    end
   end
-end
 end

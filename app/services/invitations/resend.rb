@@ -1,6 +1,6 @@
 module Invitations
   class Resend
-    Resule = Struct.new(:success?, :error)
+    Result = Struct.new(:success?, :error)
 
     def initialize(invitation:, resent_by:)
       @invitation = invitation

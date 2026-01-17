@@ -25,4 +25,8 @@ RSpec.describe Invitation, type: :model do
     expect(invitation).to be_accepted
     expect(invitation).not_to be_usable
   end
+  it "rejects invalid role" do
+    inv = build(:invitation, role: "owner")
+    expect(inv).not_to be_valid
+  end
 end

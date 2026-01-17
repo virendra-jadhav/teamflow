@@ -1,14 +1,17 @@
 class InvitationsController < ApplicationController
   skip_before_action :require_login
   before_action :set_invitation, only: [ :accept, :confirm, :resend, :revoke ]
+  skip_before_action :require_account!, only: [ :accept, :confirm ]
+
 
   def index
     authorize Invitation
-    @invitations = current_account.invitations.order(creaeted_at: :desc)
+    @invitations = current_account.invitations.order(created_at: :desc)
   end
 
   def create
     puts "params: #{params}"
+
     result = Invitations::Create.new(
       account: current_account,
       invited_by: current_user,
@@ -16,9 +19,9 @@ class InvitationsController < ApplicationController
       role: params[:role]
     ).call
     if result.persisted?
-      redirect_to users_path, notice: "Invitation sent to #{result.email}"
+      redirect_to invitations_path, notice: "Invitation sent to #{result.email}"
     else
-      redirect_to users_path, alert: result.errors.full_messages.to_sentence
+      redirect_to invitations_path, alert: result.errors.full_messages.to_sentence
     end
   end
 

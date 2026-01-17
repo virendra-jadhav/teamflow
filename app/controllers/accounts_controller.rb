@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
     @account = Account.new
   end
   def create
-    result = Account::Create.new(
+    result = Accounts::Create.new(
       user: current_user,
       account_params: account_params
     ).call
@@ -13,6 +13,7 @@ class AccountsController < ApplicationController
       redirect_to root_path, notice: "Account created successfully!!"
     else
       @account = result
+      flash.now[:alert] = result.error
       render :new, status: :unprocessable_entity
     end
   end

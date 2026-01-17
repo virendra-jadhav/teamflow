@@ -48,17 +48,25 @@
   <hr>
 
   <% if current_user && current_user.accounts.any? %>
-  <%= form_with url: account_switch_path, method: :post do %>
-  <%= select_tag :account_id,
-          options_from_collection_for_select(
-            current_user.accounts,
-            :id,
-            :name,
-            current_account&.id
-          ) %>
+  <div class="account-switcher">
+    <%= form_with url: account_switch_path, method: :post, local: true do %>
 
-  <%= submit_tag "Switch Account" %>
-  <% end %>
+    <label>Current account:</label>
+
+    <%= select_tag :account_id,
+        options_from_collection_for_select(
+          current_user.accounts,
+          :id,
+          :name,
+          current_account&.id
+        ),
+        prompt: "Select an account",
+        required: true
+      %>
+
+    <%= submit_tag "Switch Account" %>
+    <% end %>
+  </div>
   <% end %>
 
 

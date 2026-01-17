@@ -24,9 +24,20 @@ class SessionsController < ApplicationController
         render :new, status: :unauthorized
         return
       end
+
+
+      pending_invitation_id    = session[:pending_invitation_id]
+      pending_invitation_token = session[:pending_invitation_token]
+
       # reset_session prevent from session fixation
       reset_session
+
       session[:user_id] = user.id
+
+      session[:pending_invitation_id]    = pending_invitation_id
+      session[:pending_invitation_token] = pending_invitation_token
+
+
       if params[:remember_me] == "1"
         user.remember!
         cookies.permanent.signed[:remember_token] = user.remember_token
@@ -36,7 +47,16 @@ class SessionsController < ApplicationController
                           httponly: true
                         }
       end
-
+      if session[:pending_invitation_id]
+        redirect_to accept_invitation_path(
+          session[:pending_invitation_id],
+          token: session[:pending_invitation_token]
+        )
+        return
+      end
+      if user.accounts.count == 1
+        session[:current_account_id] = user.accounts.first.id
+      end
       redirect_to home_path, notice: "Logged in"
     else
       user&.increment_failed_attempts!

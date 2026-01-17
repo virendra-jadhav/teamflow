@@ -19,11 +19,20 @@ class UserPolicy < ApplicationPolicy
     membership&.admin?
   end
 
+  class Scope < Scope
+    def resolve
+      return scope.none unless user && account
+
+      scope.joins(:memberships)
+        .where(memberships: { account_id: account.id })
+    end
+  end
+
   private
 
   def membership
     return nil unless user && account
-   # user.memberships.find_by(account: current_account)
+    # user.memberships.find_by(account: current_account)
     @membership ||= user.memberships.find_by(account: account)
   end
 end

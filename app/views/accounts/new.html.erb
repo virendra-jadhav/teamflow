@@ -1,0 +1,26 @@
+<h1>Create your account</h1>
+
+<p>
+  An account represents a workspace (company, team, or project).
+</p>
+
+<%= form_with model: @account, url: accounts_path do |f| %>
+<% if @account.errors.any? %>
+<div class="errors">
+  <ul>
+    <% @account.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
+
+<div>
+  <%= f.label :name, "Account name" %><br>
+  <%= f.text_field :name, required: true %>
+</div>
+
+<div style="margin-top: 1rem;">
+  <%= f.submit "Create Account" %>
+</div>
+<% end %>

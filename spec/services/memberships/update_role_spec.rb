@@ -36,5 +36,17 @@ RSpec.describe Memberships::UpdateRole do
         expect(member_membership.reload.role).to eq("member")
       end
     end
+
+    context "when admin tries to demote themselves" do
+      it "does not allow self demotion" do
+        result = described_class.new(
+          membership: admin_membership,
+          role: "member"
+        ).call
+
+        expect(result).to be false
+        expect(admin_membership.reload.role).to eq("admin")
+      end
+    end
   end
 end

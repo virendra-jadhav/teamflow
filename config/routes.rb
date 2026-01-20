@@ -80,4 +80,10 @@ Rails.application.routes.draw do
   namespace :accounts do
     resource :settings, only: [ :show, :update, :destroy ]
   end
+
+  resources :memberships, only: [] do
+    member do
+      patch :update_role
+    end
+  end
 end

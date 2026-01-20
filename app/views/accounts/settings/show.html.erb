@@ -1,13 +1,8 @@
 <h1>Account Settings</h1>
-<%
-=begin%>
-
 <p>
   <strong>Account name:</strong>
   <%= current_account.name %>
 </p>
-<%
-=end%>
 <p>
   <strong>Account name:</strong>
   <%= current_account.name %>
@@ -47,23 +42,37 @@
 
 <h2>Members</h2>
 
-<p>
-  Total members:
-  <%= current_account.memberships.count %>
-</p>
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Role</th>
+      <% if current_membership.admin? %>
+      <th>Actions</th>
+      <% end %>
+    </tr>
+  </thead>
 
-<p>
-  Pending invitations:
-  <%= current_account.invitations.pending.count %>
-</p>
+  <tbody>
+    <% current_account.memberships.each do |membership| %>
+    <tr>
+      <td><%= membership.user.email %></td>
+      <td><%= membership.role %></td>
 
-<hr>
+      <% if current_membership.admin? && membership != current_membership %>
+      <td>
+        <%= button_to "Make Admin",
+                  update_role_membership_path(membership),
+                  method: :patch,
+                  params: { role: "admin" } %>
 
-<p>
-  Your role:
-  <strong><%= current_membership.role %></strong>
-</p>
-
-<p>
-  <em>More settings coming soon…</em>
-</p>
+        <%= button_to "Make Member",
+                  update_role_membership_path(membership),
+                  method: :patch,
+                  params: { role: "member" } %>
+      </td>
+      <% end %>
+    </tr>
+    <% end %>
+  </tbody>
+</table>

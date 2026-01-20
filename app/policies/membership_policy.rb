@@ -5,6 +5,9 @@ class MembershipPolicy < ApplicationPolicy
   def destroy?
     admin?
   end
+  def update_role?
+     admin?
+  end
   private
   def admin?
     Membership.exists?(

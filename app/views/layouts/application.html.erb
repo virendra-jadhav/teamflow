@@ -69,6 +69,10 @@
   </div>
   <% end %>
 
+  <% if current_membership&.admin? %>
+  | <%= link_to "Account Settings", accounts_settings_path %>
+  <% end %>
+
 
   <%= yield %>
 

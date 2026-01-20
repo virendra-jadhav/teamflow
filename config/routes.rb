@@ -74,4 +74,10 @@ Rails.application.routes.draw do
       delete :revoke
     end
   end
+
+  # account settings
+  # resource :account_settings, only: [ :show ], controller: "accounts/settings"
+  namespace :accounts do
+    resource :settings, only: [ :show, :update, :destroy ]
+  end
 end

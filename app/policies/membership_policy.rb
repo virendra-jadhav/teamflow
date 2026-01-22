@@ -8,6 +8,9 @@ class MembershipPolicy < ApplicationPolicy
   def update_role?
      admin?
   end
+  def transfer_ownership?
+    admin?
+  end
   private
   def admin?
     Membership.exists?(

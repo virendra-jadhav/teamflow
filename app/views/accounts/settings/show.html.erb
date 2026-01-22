@@ -1,8 +1,5 @@
 <h1>Account Settings</h1>
-<p>
-  <strong>Account name:</strong>
-  <%= current_account.name %>
-</p>
+
 <p>
   <strong>Account name:</strong>
   <%= current_account.name %>
@@ -16,7 +13,6 @@
               url: accounts_settings_path,
               method: :patch,
               local: true do |f| %>
-
 <div>
   <%= f.label :name %><br>
   <%= f.text_field :name, required: true %>
@@ -27,14 +23,15 @@
 
 <hr>
 
+<% if current_membership.admin? %>
 <h2>Danger Zone</h2>
 
 <% if current_account.memberships.count == 1 %>
 <%= button_to "Delete Account",
-        accounts_settings_path,
-        method: :delete,
-        data: { confirm: "This will permanently delete the account. Are you sure?" },
-        class: "danger" %>
+          accounts_settings_path,
+          method: :delete,
+          data: { confirm: "This will permanently delete the account. Are you sure?" },
+          class: "danger" %>
 <% else %>
 <p>
   <em>You must remove all other members before deleting this account.</em>
@@ -45,10 +42,13 @@
   <strong>Created at:</strong>
   <%= current_account.created_at.to_date %>
 </p>
+<% end %>
 
 <hr>
 
 <h2>Members</h2>
+
+<% admin_count = current_account.memberships.where(role: "admin").count %>
 
 <table>
   <thead>
@@ -80,11 +80,15 @@
                     method: :patch,
                     params: { role: "member" } %>
 
-        <% unless membership.admin? &&
-                        current_account.memberships.where(role: "admin").count == 1 %>
+        <% unless membership.admin? && admin_count == 1 %>
         <%= button_to "Remove",
                       membership_path(membership),
                       method: :delete %>
+
+        <%= button_to "Transfer Ownership",
+                      transfer_ownership_membership_path(membership),
+                      method: :post,
+                      data: { confirm: "This will make this user the new admin. Continue?" } %>
         <% end %>
         <% end %>
       </td>

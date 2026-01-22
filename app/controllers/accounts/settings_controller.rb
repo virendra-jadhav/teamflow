@@ -10,6 +10,13 @@ module Accounts
     def update
       authorize current_account
       if current_account.update(account_params)
+        AuditLog.record!(
+            account: current_account,
+            actor: current_user,
+            target: current_account,
+            action: "account.updated",
+            metadata: { name: current_account.name }
+          )
         redirect_to accounts_settings_path, notice: "Account updated successfully"
       else
         render :show, status: :unprocessable_entity

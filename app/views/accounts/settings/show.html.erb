@@ -14,7 +14,8 @@
 
 <%= form_with model: current_account,
               url: accounts_settings_path,
-              method: :patch do |f| %>
+              method: :patch,
+              local: true do |f| %>
 
 <div>
   <%= f.label :name %><br>
@@ -28,11 +29,18 @@
 
 <h2>Danger Zone</h2>
 
+<% if current_account.memberships.count == 1 %>
 <%= button_to "Delete Account",
-              accounts_settings_path,
-              method: :delete,
-              data: { confirm: "This will permanently delete the account. Are you sure?" },
-              class: "danger" %>
+        accounts_settings_path,
+        method: :delete,
+        data: { confirm: "This will permanently delete the account. Are you sure?" },
+        class: "danger" %>
+<% else %>
+<p>
+  <em>You must remove all other members before deleting this account.</em>
+</p>
+<% end %>
+
 <p>
   <strong>Created at:</strong>
   <%= current_account.created_at.to_date %>
@@ -59,17 +67,26 @@
       <td><%= membership.user.email %></td>
       <td><%= membership.role %></td>
 
-      <% if current_membership.admin? && membership != current_membership %>
+      <% if current_membership.admin? %>
       <td>
+        <% unless membership == current_membership %>
         <%= button_to "Make Admin",
-                  update_role_membership_path(membership),
-                  method: :patch,
-                  params: { role: "admin" } %>
+                    update_role_membership_path(membership),
+                    method: :patch,
+                    params: { role: "admin" } %>
 
         <%= button_to "Make Member",
-                  update_role_membership_path(membership),
-                  method: :patch,
-                  params: { role: "member" } %>
+                    update_role_membership_path(membership),
+                    method: :patch,
+                    params: { role: "member" } %>
+
+        <% unless membership.admin? &&
+                        current_account.memberships.where(role: "admin").count == 1 %>
+        <%= button_to "Remove",
+                      membership_path(membership),
+                      method: :delete %>
+        <% end %>
+        <% end %>
       </td>
       <% end %>
     </tr>

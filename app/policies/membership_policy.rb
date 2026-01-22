@@ -3,7 +3,7 @@ class MembershipPolicy < ApplicationPolicy
     admin?
   end
   def destroy?
-    admin?
+    admin? && record.user != user
   end
   def update_role?
      admin?

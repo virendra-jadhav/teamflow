@@ -1,4 +1,3 @@
-# spec/system/accounts/settings_spec.rb
 require "rails_helper"
 
 RSpec.describe "Account Settings", type: :system do
@@ -11,7 +10,7 @@ RSpec.describe "Account Settings", type: :system do
     create(:membership, user: member, account: account)
   end
 
-  context "as admin" do
+  context "as admin with multiple members" do
     before do
       login_as(admin)
       visit account_switch_path(account_id: account.id)
@@ -29,6 +28,25 @@ RSpec.describe "Account Settings", type: :system do
 
       expect(page).to have_content("Account updated successfully")
       expect(account.reload.name).to eq("New Account Name")
+    end
+
+    it "does not allow deleting the account" do
+      expect(page).not_to have_button("Delete Account")
+      expect(page).to have_content(
+        "You must remove all other members before deleting this account."
+      )
+      expect(Account.exists?(account.id)).to be true
+    end
+  end
+
+  context "as admin when sole member" do
+    before do
+      Membership.where(account: account).destroy_all
+      create(:membership, :admin, user: admin, account: account)
+
+      login_as(admin)
+      visit account_switch_path(account_id: account.id)
+      visit accounts_settings_path
     end
 
     it "allows deleting the account" do

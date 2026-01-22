@@ -31,4 +31,27 @@ RSpec.describe MembershipPolicy do
       )
     end
   end
+
+  permissions :destroy? do
+  it "allows admin to remove member" do
+    expect(subject).to permit(
+      OpenStruct.new(user: admin, account: account),
+      member_membership
+    )
+  end
+
+  it "denies admin removing self" do
+    expect(subject).not_to permit(
+      OpenStruct.new(user: admin, account: account),
+      admin_membership
+    )
+  end
+
+  it "denies member" do
+    expect(subject).not_to permit(
+      OpenStruct.new(user: member, account: account),
+      admin_membership
+    )
+  end
+end
 end

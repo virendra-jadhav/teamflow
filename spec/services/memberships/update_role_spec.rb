@@ -18,7 +18,8 @@ RSpec.describe Memberships::UpdateRole do
       it "updates the membership role" do
         result = described_class.new(
           membership: member_membership,
-          role: "admin"
+          role: "admin",
+          actor: admin
         ).call
 
         expect(result).to be true
@@ -30,7 +31,8 @@ RSpec.describe Memberships::UpdateRole do
       it "does not update role" do
         result = described_class.new(
           membership: member_membership,
-          role: "owner"
+          role: "owner",
+          actor: admin
         ).call
         expect(result).to be false
         expect(member_membership.reload.role).to eq("member")
@@ -41,11 +43,33 @@ RSpec.describe Memberships::UpdateRole do
       it "does not allow self demotion" do
         result = described_class.new(
           membership: admin_membership,
-          role: "member"
+          role: "member",
+          actor: admin
         ).call
 
         expect(result).to be false
         expect(admin_membership.reload.role).to eq("admin")
+      end
+    end
+
+     context "when an admin demotes another admin" do
+      it "allows demotion" do
+        other_admin = create(:user)
+        other_admin_membership = create(
+          :membership,
+          :admin,
+          user: other_admin,
+          account: account
+        )
+
+        result = described_class.new(
+          membership: other_admin_membership,
+          role: "member",
+          actor: admin
+        ).call
+
+        expect(result).to be true
+        expect(other_admin_membership.reload.role).to eq("member")
       end
     end
   end

@@ -84,6 +84,7 @@ Rails.application.routes.draw do
   resources :memberships, only: [] do
     member do
       patch :update_role
+      delete :destroy
     end
   end
 end

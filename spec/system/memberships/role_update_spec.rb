@@ -28,7 +28,14 @@ RSpec.describe "Membership role update", type: :system do
       expect(page).to have_content("Role updated successfully!")
     end
     it "does not allow admin to demote themselves" do
-      expect(page).not_to have_button("Make Member", exact: false)
+       # expect(page).not_to have_button("Make Member", exact: false)
+       # within("tr", text: admin.email) do
+       #   expect(page).not_to have_button("Make Member")
+       # end
+       within("tr", text: admin.email) do
+        expect(page).not_to have_button("Make Member")
+        expect(page).not_to have_button("Make Admin")
+      end
     end
   end
   context "as member" do

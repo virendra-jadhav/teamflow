@@ -10,8 +10,6 @@ class InvitationsController < ApplicationController
   end
 
   def create
-    puts "params: #{params}"
-
     result = Invitations::Create.new(
       account: current_account,
       invited_by: current_user,

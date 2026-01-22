@@ -17,6 +17,12 @@ module Accounts
     end
     def destroy
       authorize current_account
+
+      if current_account.memberships.count > 1
+        redirect_to accounts_settings_path,
+        alert: "You must remove all members before deleting the account."
+        return
+      end
       ActiveRecord::Base.transaction do
         current_account.destroy!
         session.delete(:current_account_id)

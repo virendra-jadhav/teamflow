@@ -85,6 +85,7 @@ Rails.application.routes.draw do
     member do
       patch :update_role
       delete :destroy
+      post :transfer_ownership
     end
   end
 end

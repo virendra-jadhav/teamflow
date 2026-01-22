@@ -9,7 +9,6 @@ RSpec.describe MembershipPolicy do
   let!(:admin_membership) do
     create(:membership, :admin, user: admin, account: account)
   end
-
   let!(:member_membership) do
     create(:membership, user: member, account: account)
   end
@@ -44,6 +43,21 @@ RSpec.describe MembershipPolicy do
     expect(subject).not_to permit(
       OpenStruct.new(user: admin, account: account),
       admin_membership
+    )
+  end
+
+  it "denies member" do
+    expect(subject).not_to permit(
+      OpenStruct.new(user: member, account: account),
+      admin_membership
+    )
+  end
+end
+permissions :transfer_ownership? do
+  it "allows admin" do
+    expect(subject).to permit(
+      OpenStruct.new(user: admin, account: account),
+      member_membership
     )
   end
 

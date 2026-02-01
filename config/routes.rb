@@ -87,5 +87,8 @@ Rails.application.routes.draw do
       delete :destroy
       post :transfer_ownership
     end
+    resource :avatar, only: [ :update, :destroy ], module: :memberships
+    # PATCH  /memberships/:membership_id/avatar
+    # DELETE /memberships/:membership_id/avatar
   end
 end

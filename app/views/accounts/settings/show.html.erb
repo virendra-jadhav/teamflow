@@ -13,35 +13,33 @@
               url: accounts_settings_path,
               method: :patch,
               local: true do |f| %>
-<div>
-  <%= f.label :name %><br>
-  <%= f.text_field :name, required: true %>
-</div>
+  <div>
+    <%= f.label :name %><br>
+    <%= f.text_field :name, required: true %>
+  </div>
 
-<%= f.submit "Update Account" %>
+  <%= f.submit "Update Account", class: "btn" %>
 <% end %>
 
 <hr>
 
 <% if current_membership.admin? %>
-<h2>Danger Zone</h2>
+  <h2>Danger Zone</h2>
 
-<% if current_account.memberships.count == 1 %>
-<%= button_to "Delete Account",
-          accounts_settings_path,
-          method: :delete,
-          data: { confirm: "This will permanently delete the account. Are you sure?" },
-          class: "danger" %>
-<% else %>
-<p>
-  <em>You must remove all other members before deleting this account.</em>
-</p>
-<% end %>
+  <% if current_account.memberships.count == 1 %>
+    <%= button_to "Delete Account",
+                  accounts_settings_path,
+                  method: :delete,
+                  data: { confirm: "This will permanently delete the account. Are you sure?" },
+                  class: "btn danger" %>
+  <% else %>
+    <p><em>You must remove all other members before deleting this account.</em></p>
+  <% end %>
 
-<p>
-  <strong>Created at:</strong>
-  <%= current_account.created_at.to_date %>
-</p>
+  <p>
+    <strong>Created at:</strong>
+    <%= current_account.created_at.to_date %>
+  </p>
 <% end %>
 
 <hr>
@@ -50,50 +48,95 @@
 
 <% admin_count = current_account.memberships.where(role: "admin").count %>
 
-<table>
+<table class="members-table">
   <thead>
     <tr>
+      <th>Avatar</th>
       <th>Email</th>
       <th>Role</th>
       <% if current_membership.admin? %>
-      <th>Actions</th>
+        <th>Actions</th>
       <% end %>
     </tr>
   </thead>
 
   <tbody>
     <% current_account.memberships.each do |membership| %>
-    <tr>
-      <td><%= membership.user.email %></td>
-      <td><%= membership.role %></td>
+      <tr>
+        <!-- Avatar -->
+        <td class="avatar-cell">
+          <% if membership.avatar.attached? %>
+            <%= image_tag membership.avatar.variant(resize_to_fill: [48, 48]),
+                class: "avatar",
+                loading: "lazy" %>
+          <% else %>
+            <div class="avatar placeholder">
+              <%= membership.user.email.first.upcase %>
+            </div>
+          <% end %>
+        </td>
 
-      <% if current_membership.admin? %>
-      <td>
-        <% unless membership == current_membership %>
-        <%= button_to "Make Admin",
-                    update_role_membership_path(membership),
-                    method: :patch,
-                    params: { role: "admin" } %>
+        <td><%= membership.user.email %></td>
+        <td><%= membership.role %></td>
 
-        <%= button_to "Make Member",
-                    update_role_membership_path(membership),
-                    method: :patch,
-                    params: { role: "member" } %>
+        <% if current_membership.admin? %>
+          <td>
+            <!-- Avatar actions -->
+            <div class="avatar-actions">
+              <% if policy(membership).update_avatar? %>
+                <%= form_with url: membership_avatar_path(membership),
+                              method: :patch,
+                              local: true,
+                              multipart: true,
+                              class: "inline-form" do |f| %>
+                  <%= f.file_field :avatar,
+                                   accept: "image/*",
+                                   class: "file-input" %>
+                  <%= f.submit "Update", class: "btn" %>
+                <% end %>
+              <% end %>
 
-        <% unless membership.admin? && admin_count == 1 %>
-        <%= button_to "Remove",
-                      membership_path(membership),
-                      method: :delete %>
+              <% if membership.avatar.attached? && policy(membership).remove_avatar? %>
+                <%= button_to "Remove",
+                              membership_avatar_path(membership),
+                              method: :delete,
+                              class: "btn danger",
+                              data: { confirm: "Remove avatar?" } %>
+              <% end %>
+            </div>
 
-        <%= button_to "Transfer Ownership",
-                      transfer_ownership_membership_path(membership),
-                      method: :post,
-                      data: { confirm: "This will make this user the new admin. Continue?" } %>
+            <!-- Membership / admin actions -->
+            <div class="member-actions">
+              <% unless membership == current_membership %>
+                <%= button_to "Make Admin",
+                              update_role_membership_path(membership),
+                              method: :patch,
+                              params: { role: "admin" },
+                              class: "btn" %>
+
+                <%= button_to "Make Member",
+                              update_role_membership_path(membership),
+                              method: :patch,
+                              params: { role: "member" },
+                              class: "btn" %>
+
+                <% unless membership.admin? && admin_count == 1 %>
+                  <%= button_to "Remove",
+                                membership_path(membership),
+                                method: :delete,
+                                class: "btn danger" %>
+
+                  <%= button_to "Transfer Ownership",
+                                transfer_ownership_membership_path(membership),
+                                method: :post,
+                                class: "btn warning",
+                                data: { confirm: "This will make this user the new admin. Continue?" } %>
+                <% end %>
+              <% end %>
+            </div>
+          </td>
         <% end %>
-        <% end %>
-      </td>
-      <% end %>
-    </tr>
+      </tr>
     <% end %>
   </tbody>
 </table>

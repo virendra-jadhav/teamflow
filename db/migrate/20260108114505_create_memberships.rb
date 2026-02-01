@@ -1,7 +1,7 @@
 # db/migrate/20260107000200_create_memberships.rb
 class CreateMemberships < ActiveRecord::Migration[7.2]
   def change
-    create_table :memberships do |t|
+    create_table :memberships, id: :uuid do |t|
       t.references :user, null: false, foreign_key: true, type: :uuid
       t.references :account, null: false, foreign_key: true, type: :uuid
       t.string :role, null: false
@@ -9,7 +9,7 @@ class CreateMemberships < ActiveRecord::Migration[7.2]
     end
 
     # Prevent duplicate membership
-    add_index :memberships, [:user_id, :account_id], unique: true
+    add_index :memberships, [ :user_id, :account_id ], unique: true
 
     # Enforce allowed roles
     execute <<~SQL

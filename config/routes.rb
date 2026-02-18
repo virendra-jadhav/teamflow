@@ -1,6 +1,15 @@
 Rails.application.routes.draw do
   # setting home page as login page
   # root "sessions#new"
+  # require "sidekiq/web"
+  # authenticate :user, ->(u) { u.admin? } do
+  #   mount Sidekiq::Web => "/sidekiq"
+  # end
+  if Rails.env.development?
+    require "sidekiq/web"
+    mount Sidekiq::Web => "/sidekiq"
+  end
+
 
   get "/home", to: "home#index"
   root "home#index"

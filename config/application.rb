@@ -26,6 +26,9 @@ module Teamflow
     #
     config.active_storage.record_id_type = :uuid
 
+    config.active_job.queue_adapter = :sidekiq
+
+
 
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid

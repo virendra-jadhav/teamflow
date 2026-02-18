@@ -27,6 +27,8 @@ module Memberships
       # membership.reload
 
       membership.avatar.attach(file)
+
+      Memberships::ProcessAvatarJob.perform_later(membership.id)
       membership
     end
 

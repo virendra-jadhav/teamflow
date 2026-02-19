@@ -35,12 +35,16 @@ jobs:
           ruby-version: 3.2.4
           bundler-cache: true
 
-      - name: Setup Database
+           - name: Setup Database
+        env:
+          RAILS_ENV: test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/teamflow_test
         run: |
-          cp config/database.yml config/database.yml.backup
-          sed -i 's/teamflow_production/teamflow_test/' config/database.yml
-          RAILS_ENV=test bundle exec rails db:create
-          RAILS_ENV=test bundle exec rails db:schema:load
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
+
 
       - name: Run Tests
         run: bundle exec rspec
